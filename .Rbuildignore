@@ -1,0 +1,9 @@
+^.*\.Rproj$
+^\.Rproj\.user$
+^dimv_results.*\.RData$
+^dimv_.*\.html$
+^.*\.png$
+^Rplots\.pdf$
+^__pycache__/
+^tests/
+^cleanup\.R$

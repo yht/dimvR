@@ -1,0 +1,32 @@
+Package: dimvR
+Type: Package
+Title: Conditional Distribution-based Imputation Missing Values with regularization
+Version: 0.1.0
+Author: Yudha H Tejaningrat
+Maintainer: Yudha H Tejaningrat <yht.dev@gmail.com>
+Description: DIMV with End-to-end explainability pipeline, SHAP interpretability,
+    and automatic HTML report generation.
+License: MIT
+Encoding: UTF-8
+LazyData: true
+Imports:
+    data.table,
+    dplyr,
+    caret,
+    xgboost,
+    fastshap,
+    mice,
+    randomForest,
+    norm,
+    future,
+    future.apply,
+    digest,
+    ggplot2,
+    reshape2,
+    viridis,
+    forcats,
+    rmarkdown
+Suggests:
+    mlbench,
+    knitr
+RoxygenNote: 7.3.3
