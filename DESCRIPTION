@@ -1,7 +1,7 @@
 Package: dimvR
 Type: Package
 Title: Conditional Distribution-Based Imputation of Missing Values with Regularization
-Version: 0.1.0
+Version: 0.1.1
 Authors@R: person("Yudha H", "Tejaningrat", 
                   email = "yht.dev@gmail.com", 
                   role = c("aut", "cre"))
