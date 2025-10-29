@@ -1,59 +1,127 @@
 # ===========================================
 # File: R/report_generator.R
 # ===========================================
-# - show pooled SE and 95% CI
 
+utils::globalVariables(c(
+  "mse_pred", "mse_pred_se", "mse_shap", "mse_shap_se",
+  "method", "mechanism", "shap_low", "shap_high", "rate", "m"
+))
+
+#' Generate HTML Report for DIMV Results
+#' 
+#' Creates an HTML report with visualizations and tables showing
+#' pooled standard errors and 95% confidence intervals.
+#' 
+#' @param results Data frame of results from run_full_pipeline()
+#' @param out_file Output HTML file path (default: "dimv_report.html")
+#' @param dataset_name Name of the dataset for the report title
+#' @return NULL (invisibly). Writes HTML file to disk.
+#' @export
+#' @importFrom ggplot2 ggplot aes geom_bar geom_errorbar facet_wrap theme_minimal labs ggsave position_dodge
+#' @importFrom dplyr mutate select %>%
+#' @importFrom knitr kable
+#' @importFrom viridis scale_fill_viridis
 generate_report <- function(results,
                             out_file = "dimv_report.html",
                             dataset_name = "Experiment Dataset") {
-  if (!requireNamespace("ggplot2", quietly = TRUE)) install.packages("ggplot2")
-  if (!requireNamespace("knitr", quietly = TRUE)) install.packages("knitr")
-  if (!requireNamespace("dplyr", quietly = TRUE)) install.packages("dplyr")
-  if (!requireNamespace("viridis", quietly = TRUE)) install.packages("viridis")
   
-  requireNamespace(ggplot2)
-  requireNamespace(dplyr)
-  requireNamespace(knitr)
-  requireNamespace(viridis)
+  # Check required packages
+  if (!requireNamespace("ggplot2", quietly = TRUE)) {
+    stop("Package 'ggplot2' is required but not installed. Please install it with: install.packages('ggplot2')")
+  }
+  if (!requireNamespace("knitr", quietly = TRUE)) {
+    stop("Package 'knitr' is required but not installed. Please install it with: install.packages('knitr')")
+  }
+  if (!requireNamespace("dplyr", quietly = TRUE)) {
+    stop("Package 'dplyr' is required but not installed. Please install it with: install.packages('dplyr')")
+  }
+  if (!requireNamespace("viridis", quietly = TRUE)) {
+    stop("Package 'viridis' is required but not installed. Please install it with: install.packages('viridis')")
+  }
   
   results <- as.data.frame(results)
-  # add 95% CIs
+  
+  # Add 95% CIs
   results <- results %>%
-    mutate(pred_low = mse_pred - 1.96 * mse_pred_se,
-           pred_high = mse_pred + 1.96 * mse_pred_se,
-           shap_low = mse_shap - 1.96 * mse_shap_se,
-           shap_high = mse_shap + 1.96 * mse_shap_se)
+    dplyr::mutate(
+      pred_low = mse_pred - 1.96 * mse_pred_se,
+      pred_high = mse_pred + 1.96 * mse_pred_se,
+      shap_low = mse_shap - 1.96 * mse_shap_se,
+      shap_high = mse_shap + 1.96 * mse_shap_se
+    )
   
-  summary_plot <- ggplot(results, aes(x = method, y = mse_shap, fill = mechanism)) +
-    geom_bar(stat = "identity", position = position_dodge(width = 0.7)) +
-    geom_errorbar(aes(ymin = shap_low, ymax = shap_high), position = position_dodge(width = 0.7), width = 0.3) +
-    facet_wrap(~ rate, labeller = label_both) +
-    theme_minimal(base_size = 13) +
-    scale_fill_viridis(discrete = TRUE) +
-    labs(title = paste0("Explainability Report — ", dataset_name),
-         subtitle = "Pooled SHAP MSE (Rubin pooling) with 95% CI",
-         y = "Pooled SHAP MSE", x = "Imputation Method")
+  # Create summary plot
+  summary_plot <- ggplot2::ggplot(
+    results, 
+    ggplot2::aes(x = method, y = mse_shap, fill = mechanism)
+  ) +
+    ggplot2::geom_bar(
+      stat = "identity", 
+      position = ggplot2::position_dodge(width = 0.7)
+    ) +
+    ggplot2::geom_errorbar(
+      ggplot2::aes(ymin = shap_low, ymax = shap_high), 
+      position = ggplot2::position_dodge(width = 0.7), 
+      width = 0.3
+    ) +
+    ggplot2::facet_wrap(~ rate, labeller = ggplot2::label_both) +
+    ggplot2::theme_minimal(base_size = 13) +
+    viridis::scale_fill_viridis(discrete = TRUE) +
+    ggplot2::labs(
+      title = paste0("Explainability Report: ", dataset_name),
+      subtitle = "Pooled SHAP MSE (Rubin pooling) with 95% CI",
+      y = "Pooled SHAP MSE", 
+      x = "Imputation Method"
+    )
   
+  # Save plot
   img_summary <- tempfile(fileext = ".png")
-  ggsave(filename = img_summary, plot = summary_plot, width = 9, height = 5, dpi = 120)
+  ggplot2::ggsave(
+    filename = img_summary, 
+    plot = summary_plot, 
+    width = 9, 
+    height = 5, 
+    dpi = 120
+  )
   
-  # create table html
-  table_html <- knitr::kable(results %>% select(method, mechanism, rate, m, mse_pred, mse_pred_se, mse_shap, mse_shap_se),
-                             format = "html", digits = 4)
+  # Create table HTML
+  table_html <- knitr::kable(
+    results %>% 
+      dplyr::select(method, mechanism, rate, m, mse_pred, mse_pred_se, mse_shap, mse_shap_se),
+    format = "html", 
+    digits = 4
+  )
   
-  # build HTML
+  # Build HTML content
   html_content <- paste0(
-    "<html><head><title>DIMV Explainability Report</title></head><body>",
+    "<!DOCTYPE html>",
+    "<html><head>",
+    "<meta charset='UTF-8'>",
+    "<title>DIMV Explainability Report</title>",
+    "<style>",
+    "body { font-family: Arial, sans-serif; margin: 40px; }",
+    "table { border-collapse: collapse; width: 100%; margin: 20px 0; }",
+    "th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }",
+    "th { background-color: #4CAF50; color: white; }",
+    "tr:nth-child(even) { background-color: #f2f2f2; }",
+    "img { max-width: 100%; height: auto; }",
+    "</style>",
+    "</head><body>",
+    "<h1>DIMV Explainability Report</h1>",
     "<h2>Dataset: ", dataset_name, "</h2>",
     "<p><b>Generated:</b> ", format(Sys.time(), "%Y-%m-%d %H:%M:%S"), "</p>",
     "<h3>Results (pooled, Rubin rules)</h3>",
     table_html,
-    "<h3>Aggregate Visualization (Pooled SHAP MSE ± 95% CI)</h3>",
-    "<img src='", img_summary, "' width='900'/>",
-    "<p><i>Report automatically generated by dimvExplainRpaper</i></p>",
+    "<h3>Aggregate Visualization (Pooled SHAP MSE 95% CI)</h3>",
+    "<img src='", img_summary, "' alt='Summary Plot'/>",
+    "<hr>",
+    "<p><i>Report automatically generated by dimvR package</i></p>",
     "</body></html>"
   )
   
+  # Write HTML file
   writeLines(html_content, out_file)
-  message("HTML report saved to: ", normalizePath(out_file))
+  message("HTML report saved to: ", normalizePath(out_file, mustWork = FALSE))
+  
+  invisible(NULL)
 }
