@@ -28,13 +28,13 @@ jobs:
         with:
           r-version: ${{ matrix.config.r }}
           use-public-rspm: true
-          use-utf8: true
 
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
           extra-packages: |
             any::remotes
             any::mice
+            any::rcmdcheck
           needs: check
 
       - uses: r-lib/actions/check-r-package@v2
