@@ -17,12 +17,10 @@ LazyData: true
 Depends: R (>= 3.5.0)
 Imports:
     MASS,
+    stats,
     dplyr,
-    caret,
     xgboost,
     fastshap,
-    mice,
-    randomForest,
     future,
     future.apply,
     digest,
@@ -30,6 +28,10 @@ Imports:
     viridis,
     knitr
 Suggests:
+    mice,
+    miceadds,
+    miceranger,
+    micefast,
     mlbench,
     rmarkdown,
     testthat (>= 3.0.0)
