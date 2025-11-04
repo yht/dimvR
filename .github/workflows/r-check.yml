@@ -13,7 +13,6 @@ jobs:
       matrix:
         config:
           - {os: ubuntu-latest, r: 'release'}
-          - {os: macos-latest,  r: 'release'}
           - {os: windows-latest, r: 'release'}
 
     name: ${{ matrix.config.os }} (R ${{ matrix.config.r }})
