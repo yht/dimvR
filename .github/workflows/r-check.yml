@@ -34,6 +34,7 @@ jobs:
           extra-packages: |
             any::remotes
           needs: check
+          dependencies: "hard"
 
       - uses: r-lib/actions/check-r-package@v2
         with:
