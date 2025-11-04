@@ -8,15 +8,19 @@ on:
 
 jobs:
   R-CMD-check:
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.config.os }}
     strategy:
       matrix:
         config:
-          - {os: ubuntu-latest,   r: 'release'}
-          - {os: windows-latest,  r: 'release'}
-          - {os: macos-latest,    r: 'release'}
+          - {os: ubuntu-latest, r: 'release'}
+          - {os: macos-latest,  r: 'release'}
+          - {os: windows-latest, r: 'release'}
 
     name: ${{ matrix.config.os }} (R ${{ matrix.config.r }})
+
+    env:
+      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+      R_KEEP_PKG_SOURCE: yes
 
     steps:
       - uses: actions/checkout@v4
@@ -27,14 +31,13 @@ jobs:
           use-public-rspm: true
           use-utf8: true
 
-      - uses: r-lib/actions/setup-pandoc@v2
-
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
+          dependencies: "soft"        # ✅ skip Suggests (miceranger, micefast)
           extra-packages: |
             any::remotes
+            any::mice
           needs: check
-          dependencies: "hard"
 
       - uses: r-lib/actions/check-r-package@v2
         with:
