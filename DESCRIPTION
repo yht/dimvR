@@ -30,8 +30,6 @@ Imports:
 Suggests:
     mice,
     miceadds,
-    miceranger,
-    micefast,
     mlbench,
     rmarkdown,
     testthat (>= 3.0.0)
