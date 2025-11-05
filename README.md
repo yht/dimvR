@@ -53,13 +53,13 @@ The development of this package is motivated by methodological advances discusse
 
 ## References
 
-Nguyen, M.-H., Dao, M.-H., Tran, M.-T., & Phung, D. (2023).  
-**Distribution-based Imputation using Conditional Expectation with Regularization**. *arXiv preprint*.  
+Vu, M. A., Nguyen, T., Do, T. T., Phan, N., Chawla, N. V., Halvorsen, P., Riegler, M. A. & Nguyen, B. T. (2023).
+**Conditional expectation with regularization for missing data imputation**. *arXiv:2302.00911v3 [stat.ML]*.  
 https://arxiv.org/abs/2302.00911
 
 Nguyen, M.-H., Dao, M.-H., Tran, M.-T., & Phung, D. (2024).  
-**Explainability of Machine Learning Models under Missing Data**. *arXiv preprint*.  
-https://arxiv.org/abs/2407.00411v1
+**Explainability of Machine Learning Models under Missing Data**. *arXiv:2407.00411v3 [cs.LG]*.  
+https://arxiv.org/abs/2407.00411
 
 Van Buuren, S., & Groothuis-Oudshoorn, K. (2011).  
 **mice: Multivariate Imputation by Chained Equations in R**. *Journal of Statistical Software*, 45(3).  
