@@ -31,6 +31,16 @@
 #' Supports adaptive (correlation), fixed-threshold (correlation),
 #' mutual information, and hybrid (correlation + MI) methods.
 #'
+#' @param X A numeric data frame or matrix.
+#' @param target_var Target variable (name or index).
+#' @param min_features Minimum number of features to select.
+#' @param max_features Maximum number of features to select.
+#' @param method Selection method: adaptive, fixed, mi, or hybrid.
+#' @param threshold Fixed correlation threshold (for method = "fixed").
+#' @param nbins Number of bins for MI estimation (methods "mi" and "hybrid").
+#' @param verbose If TRUE, prints selection summary.
+#'
+#' @export
 #' @keywords internal
 #' @importFrom stats cor median
 select_features_adaptive <- function(X,

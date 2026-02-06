@@ -13,3 +13,8 @@
 ^PROGRESS_PHASE1\.md$
 ^\.github$
 ^eval/
+^\.git$
+^\.gitignore$
+^\.RData$
+^\.Rhistory$
+^\.\.Rcheck$

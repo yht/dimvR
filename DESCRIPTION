@@ -1,10 +1,12 @@
 Package: dimvR
 Type: Package
 Title: Conditional Distribution-Based Imputation of Missing Values with Regularization
-Version: 0.1.1
+Version: 0.1.2
 Authors@R: person("Yudha H", "Tejaningrat", 
                   email = "yht.dev@gmail.com", 
                   role = c("aut", "cre"))
+Author: Yudha H Tejaningrat [aut, cre]
+Maintainer: Yudha H Tejaningrat <yht.dev@gmail.com>
 Description: Implements conditional distribution-based imputation methods for 
     missing values with regularization techniques. Provides an end-to-end 
     explainability pipeline with SHAP (SHapley Additive exPlanations) 
@@ -13,7 +15,6 @@ Description: Implements conditional distribution-based imputation methods for
     with Rubin's pooling rules for proper uncertainty quantification.
 License: MIT + file LICENSE
 Encoding: UTF-8
-LazyData: true
 Depends: R (>= 3.5.0)
 Imports:
     MASS,
@@ -27,6 +28,7 @@ Imports:
     ggplot2,
     viridis,
     knitr
+VignetteBuilder: knitr
 Suggests:
     mice,
     miceadds,

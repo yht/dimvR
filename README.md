@@ -136,6 +136,11 @@ fs <- select_features_adaptive(X, target_var = "x1", method = "hybrid", max_feat
 fs$selected_features
 ```
 
+## Documentation
+
+- Vignette: `vignettes/feature_selection.Rmd`
+- Examples: `examples/day1_feature_selection_demo.R`, `examples/benchmark_feature_selection.R`
+
 
 ## To Do
 

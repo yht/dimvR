@@ -159,7 +159,7 @@ dimv_train <- function(X, lambda = 1.0, maxit = 50, tol = 1e-4,
                  iters = it,
                  diff_history = diff_history,
                  colnames = coln,
-                 version = "0.1.1"),
+                 version = "0.1.2"),
             class = "dimv_imputer")
 }
 
