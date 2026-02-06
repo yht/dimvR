@@ -9,8 +9,28 @@ select_features_adaptive(
   target_var,
   min_features = 2,
   max_features = 5,
+  method = c("adaptive", "fixed", "mi", "hybrid"),
+  threshold = NULL,
+  nbins = 5,
   verbose = FALSE
 )
+}
+\arguments{
+\item{X}{A numeric data frame or matrix.}
+
+\item{target_var}{Target variable (name or index).}
+
+\item{min_features}{Minimum number of features to select.}
+
+\item{max_features}{Maximum number of features to select.}
+
+\item{method}{Selection method: adaptive, fixed, mi, or hybrid.}
+
+\item{threshold}{Fixed correlation threshold (for method = "fixed").}
+
+\item{nbins}{Number of bins for MI estimation (methods "mi" and "hybrid").}
+
+\item{verbose}{If TRUE, prints selection summary.}
 }
 \description{
 Selects a subset of predictor features for imputing a target variable,

@@ -3,7 +3,7 @@ title: "Intelligent Feature Selection for DIMV"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Intelligent Feature Selection for DIMV}
-  %\VignetteEngine{rmarkdown::html_vignette}
+  %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
 
