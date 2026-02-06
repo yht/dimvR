@@ -18,8 +18,14 @@ The development of this package is motivated by methodological advances discusse
 - **Convergence-Based Iterative Procedure:**  
   Iteratively updates missing values variable-by-variable until convergence, ensuring stable and consistent imputations.
 
-- **Lightweight and Native to R:**  
-  No external engines or Python dependencies required; fully implemented in base R for reproducibility and ease of integration.
+- **Feature Selection (Optional):**  
+  Adaptive, fixed-threshold, mutual information, and hybrid selection strategies to reduce noise and multicollinearity in conditional models.
+
+- **Explainability Pipeline (Optional):**  
+  End-to-end evaluation with SHAP-based explainability and HTML report generation (requires optional dependencies).
+
+- **Lightweight Core, Optional Extensions:**  
+  Core imputation is implemented in base R; advanced pipelines use optional packages for modeling and visualization.
 
 - **Model-Agnostic Integration:**  
   Output can be used with any downstream statistical or machine learning model, including regression, tree-based models, and modern explainability frameworks.
@@ -94,7 +100,7 @@ for (j in seq_along(X)) {
 }
 
 # Train DIMV imputer
-imp <- dimv_train(X, lambda = 0.1)
+imp <- dimv_train(X, lambda = 0.1, feature_select = TRUE)
 
 # Print summary
 print(imp)
@@ -105,6 +111,10 @@ head(X_imputed)
 
 # Multiple imputation (m = 5)
 imputations <- dimv_impute_multiple(imp, X, m = 5)
+
+# Feature selection (standalone)
+fs <- select_features_adaptive(X, target_var = "x1", method = "hybrid", max_features = 2)
+fs$selected_features
 ```
 
 
