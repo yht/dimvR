@@ -1,0 +1,60 @@
+---
+title: "Intelligent Feature Selection for DIMV"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Intelligent Feature Selection for DIMV}
+  %\VignetteEngine{rmarkdown::html_vignette}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
+```
+
+## Overview
+
+The `dimvR` package provides optional feature selection for DIMV imputation.
+This can reduce noise and multicollinearity in conditional regressions.
+
+Available methods:
+
+- `adaptive`: median-based correlation threshold
+- `fixed`: fixed correlation threshold
+- `mi`: mutual information (histogram-based)
+- `hybrid`: combined correlation and MI
+
+## Basic usage
+
+```{r}
+library(dimvR)
+set.seed(123)
+
+X <- data.frame(
+  x1 = rnorm(100),
+  x2 = rnorm(100),
+  x3 = rnorm(100),
+  x4 = rnorm(100)
+)
+
+X$x2 <- 0.9 * X$x1 + rnorm(100, sd = 0.2)
+X$x3 <- 0.6 * X$x1 + rnorm(100, sd = 0.3)
+
+res_adaptive <- select_features_adaptive(X, target_var = "x1", method = "adaptive")
+res_fixed <- select_features_adaptive(X, target_var = "x1", method = "fixed", threshold = 0.4)
+res_mi <- select_features_adaptive(X, target_var = "x1", method = "mi")
+res_hybrid <- select_features_adaptive(X, target_var = "x1", method = "hybrid")
+
+res_adaptive$selected_names
+```
+
+## Integration with DIMV
+
+```{r}
+imp <- dimv_train(X, lambda = 0.1, feature_select = TRUE)
+print(imp)
+```
+
+## Notes
+
+- Feature selection is currently experimental and may change.
+- MI is a simple histogram-based estimator for speed and portability.

@@ -60,12 +60,27 @@ select_features_adaptive <- function(X,
   candidates <- setdiff(seq_len(p), target_var)
   target_col <- X[, target_var]
   
+  if (length(candidates) == 0) {
+    return(list(
+      selected_features = integer(0),
+      selected_names = character(0),
+      scores = numeric(0),
+      target_var = target_var,
+      threshold_used = NA_real_,
+      method_info = list(
+        method = match.arg(method),
+        correlation_scores = numeric(0),
+        mi_scores = NULL
+      )
+    ))
+  }
+  
   # Pairwise correlations with target
-  cors <- sapply(candidates, function(j) {
+  cors <- vapply(candidates, function(j) {
     complete_both <- !is.na(target_col) & !is.na(X[, j])
     if (sum(complete_both) < 3) return(0)  # Not enough data for correlation
     cor(target_col[complete_both], X[complete_both, j], use = "complete.obs")
-  })
+  }, numeric(1))
   
   abs_cors <- abs(cors)
   names(abs_cors) <- colnames(X)[candidates]

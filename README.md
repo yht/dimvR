@@ -2,24 +2,38 @@
 
 > Regularized Conditional Distribution-based Imputation for Missing Data in R
 
-This R package implements a regularized conditional distribution-based approach for missing data imputation, commonly referred to as **DIMV (Distribution-based Imputation using Conditional Expectation with Regularization)** [(Nguyen et al., 2023)](https://arxiv.org/abs/2302.00911). The method imputes missing entries by estimating the conditional expectation of each variable given the others, while incorporating regularization to improve numerical stability and robustness in high-dimensional or multicollinear settings.
+This R package implements a regularized conditional distribution-based approach for missing data imputation,
+commonly referred to as **DIMV (Distribution-based Imputation using Conditional Expectation with Regularization)**
+[(Nguyen et al., 2023)](https://arxiv.org/abs/2302.00911). The method imputes missing entries by estimating the
+conditional expectation of each variable given the others, while incorporating regularization to improve
+numerical stability and robustness in high-dimensional or multicollinear settings.
 
-The development of this package is motivated by methodological advances discussed in the paper *“Explainability of Machine Learning Models under Missing Data”* [(Nguyen et al., 2024)](https://arxiv.org/abs/2407.00411v1), which highlights the importance of principled imputation methods for maintaining both predictive performance and model interpretability. The **dimvR** package offers a faithful and reproducible R implementation of the [DIMV framework](https://github.com/maianhpuco/DIMVImputation), enabling researchers and practitioners to incorporate regularized conditional imputation into statistical modeling workflows, machine learning pipelines, and explainability studies.
+The development of this package is motivated by methodological advances discussed in the paper
+*“Explainability of Machine Learning Models under Missing Data”* [(Nguyen et al., 2024)](https://arxiv.org/abs/2407.00411v1),
+which highlights the importance of principled imputation methods for maintaining both predictive performance and
+model interpretability. The **dimvR** package offers a faithful and reproducible R implementation of the
+[DIMV framework](https://github.com/maianhpuco/DIMVImputation), enabling researchers and practitioners to
+incorporate regularized conditional imputation into statistical modeling workflows, machine learning pipelines,
+and explainability studies.
 
 
 ## Key Features
 
 - **Regularized Conditional Imputation (DIMV):**  
-  Implements conditional expectation–based imputation with ridge regularization for enhanced stability in high-dimensional or multicollinear data settings.
+  Implements conditional expectation–based imputation with ridge regularization for enhanced stability in
+  high-dimensional or multicollinear data settings.
 
 - **Deterministic and Multiple Imputation:**  
-  Supports single deterministic imputation as well as multiple imputation by injecting residual uncertainty to better reflect posterior variability.
+  Supports single deterministic imputation as well as multiple imputation by injecting residual uncertainty to
+  better reflect posterior variability.
 
 - **Convergence-Based Iterative Procedure:**  
-  Iteratively updates missing values variable-by-variable until convergence, ensuring stable and consistent imputations.
+  Iteratively updates missing values variable-by-variable until convergence, ensuring stable and consistent
+  imputations.
 
 - **Feature Selection (Optional):**  
-  Adaptive, fixed-threshold, mutual information, and hybrid selection strategies to reduce noise and multicollinearity in conditional models.
+  Adaptive, fixed-threshold, mutual information, and hybrid selection strategies to reduce noise and
+  multicollinearity in conditional models.
 
 - **Explainability Pipeline (Optional):**  
   End-to-end evaluation with SHAP-based explainability and HTML report generation (requires optional dependencies).
@@ -28,7 +42,8 @@ The development of this package is motivated by methodological advances discusse
   Core imputation is implemented in base R; advanced pipelines use optional packages for modeling and visualization.
 
 - **Model-Agnostic Integration:**  
-  Output can be used with any downstream statistical or machine learning model, including regression, tree-based models, and modern explainability frameworks.
+  Output can be used with any downstream statistical or machine learning model, including regression, tree-based
+  models, and modern explainability frameworks.
 
 
 ## Assumptions & Limitations
@@ -36,14 +51,16 @@ The development of this package is motivated by methodological advances discusse
 **Assumptions**:
 
 - **Approximate Multivariate Normality:**  
-  DIMV implicitly relies on the assumption that the joint distribution of variables is approximately multivariate normal, enabling the use of conditional expectation as the optimal estimator.
+  DIMV implicitly relies on the assumption that the joint distribution of variables is approximately multivariate
+  normal, enabling the use of conditional expectation as the optimal estimator.
 
 - **Missing at Random (MAR) Conditions Preferred:**  
   The method performs best when data are Missing Completely at Random (MCAR) or Missing at Random (MAR).  
   Under Missing Not at Random (MNAR), bias may persist unless additional modeling is applied.
 
 - **Linear Conditional Relationships:**  
-  Ridge-based conditional models assume linear relationships among variables. Although robust under moderate deviations, highly nonlinear dependencies may reduce accuracy.
+  Ridge-based conditional models assume linear relationships among variables. Although robust under moderate
+  deviations, highly nonlinear dependencies may reduce accuracy.
 
 **Limitations**:
 
@@ -51,10 +68,12 @@ The development of this package is motivated by methodological advances discusse
   In datasets where nonlinearities dominate, tree-based or neural-network-based imputation may outperform DIMV.
 
 - **Performance Degradation in High Missingness (>60%):**  
-  When a large proportion of entries are missing, conditional estimates become less reliable, especially for variables with low correlation to others.
+  When a large proportion of entries are missing, conditional estimates become less reliable, especially for 
+  variables with low correlation to others.
 
 - **Multiple Imputation is Approximate:**  
-  Noise injection relies on Gaussian residual estimates, which may inadequately capture uncertainty if residuals deviate significantly from normality.
+  Noise injection relies on Gaussian residual estimates, which may inadequately capture uncertainty if residuals 
+  deviate significantly from normality.
 
 
 ## References
