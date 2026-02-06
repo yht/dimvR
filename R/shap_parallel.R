@@ -13,6 +13,7 @@
 #' @param X_test Test data frame to explain
 #' @param nsim Number of Monte Carlo simulations for SHAP
 #' @param n_workers Number of parallel workers
+#' @param seed Optional RNG seed for reproducible SHAP estimates
 #' @return Matrix of SHAP values
 #' @keywords internal
 #' @importFrom xgboost xgb.DMatrix
@@ -20,7 +21,7 @@
 #' @importFrom future plan multisession sequential
 #' @importFrom future.apply future_lapply
 #' @importFrom stats predict
-compute_shap_parallel <- function(model, X_train, X_test, nsim = 1000, n_workers = 4) {
+compute_shap_parallel <- function(model, X_train, X_test, nsim = 1000, n_workers = 4, seed = NULL) {
   
   # Dependency validation
   for (pkg in c("xgboost", "fastshap", "future", "future.apply")) {
@@ -36,25 +37,40 @@ compute_shap_parallel <- function(model, X_train, X_test, nsim = 1000, n_workers
     as.numeric(predict(model, xgboost::xgb.DMatrix(as.matrix(data))))
   }
   
-  # Split workload
+  # Split workload (ensure consistent chunking across sequential/parallel)
   n <- nrow(X_test)
-  splits <- split(seq_len(n), cut(seq_len(n), breaks = n_workers, labels = FALSE))
+  if (n <= 1) {
+    splits <- list(seq_len(n))
+  } else {
+    split_count <- if (is.null(n_workers) || !is.numeric(n_workers) || n_workers <= 1) {
+      2
+    } else {
+      n_workers
+    }
+    split_count <- min(split_count, n)
+    splits <- split(seq_len(n), cut(seq_len(n), breaks = split_count, labels = FALSE))
+  }
   
   # Plan management
   old_plan <- future::plan()                  # store current plan
   on.exit(future::plan(old_plan), add = TRUE) # restore after execution
   
   # Try parallel, fallback to sequential if needed
-  try_parallel <- TRUE
+  try_parallel <- is.numeric(n_workers) && n_workers > 1
   result <- NULL
+  
+  seed_use <- if (is.null(seed)) 123 else seed
   
   if (try_parallel) {
     try({
       future::plan(future::multisession, workers = n_workers)
       
+      split_seeds <- seed_use + seq_along(splits)
       result <- future.apply::future_lapply(
-        splits,
-        function(idx) {
+        seq_along(splits),
+        function(i) {
+          set.seed(split_seeds[i])
+          idx <- splits[[i]]
           requireNamespace("xgboost", quietly = TRUE)
           requireNamespace("fastshap", quietly = TRUE)
           
@@ -71,7 +87,7 @@ compute_shap_parallel <- function(model, X_train, X_test, nsim = 1000, n_workers
             error = function(e) do.call(fastshap::explain, args)
           )
         },
-        future.seed = TRUE
+        future.seed = seed_use
       )
     }, silent = TRUE)
   }
@@ -81,9 +97,12 @@ compute_shap_parallel <- function(model, X_train, X_test, nsim = 1000, n_workers
     message("[SHAP] Parallel execution failed => running sequentially.")
     future::plan(future::sequential)
     
-    result <- lapply(
-      splits,
-      function(idx) {
+    split_seeds <- seed_use + seq_along(splits)
+    result <- future.apply::future_lapply(
+      seq_along(splits),
+      function(i) {
+        set.seed(split_seeds[i])
+        idx <- splits[[i]]
         args <- list(
           X = as.data.frame(X_train),
           pred_wrapper = pred_wrapper,
@@ -95,7 +114,8 @@ compute_shap_parallel <- function(model, X_train, X_test, nsim = 1000, n_workers
           do.call(fastshap::explain, c(list(object = model), args)),
           error = function(e) do.call(fastshap::explain, args)
         )
-      }
+      },
+      future.seed = seed_use
     )
   }
   
