@@ -4,8 +4,14 @@
 \alias{compute_shap_parallel}
 \title{Compute SHAP Values in Parallel}
 \usage{
-compute_shap_parallel(model, X_train, X_test, nsim = 1000, n_workers = 4,
-  seed = NULL)
+compute_shap_parallel(
+  model,
+  X_train,
+  X_test,
+  nsim = 1000,
+  n_workers = 4,
+  seed = NULL
+)
 }
 \arguments{
 \item{model}{Trained model object (e.g., xgboost model)}
