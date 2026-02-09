@@ -2,7 +2,7 @@
 % Please edit documentation in R/feature_selection.R
 \name{select_features_adaptive}
 \alias{select_features_adaptive}
-\title{Adaptive Feature Selection for DIMV (Correlation-based)}
+\title{Adaptive Feature Selection for DIMV (Correlation/MI/Hybrid)}
 \usage{
 select_features_adaptive(
   X,
@@ -33,9 +33,8 @@ select_features_adaptive(
 \item{verbose}{If TRUE, prints selection summary.}
 }
 \description{
-Selects a subset of predictor features for imputing a target variable,
-using a simple adaptive correlation-based threshold. The goal is to
-reduce noise and multicollinearity in the conditional models while
-maintaining minimal intrusion into the DIMV framework.
+Selects a subset of predictor features for imputing a target variable.
+Supports adaptive (correlation), fixed-threshold (correlation),
+mutual information, and hybrid (correlation + MI) methods.
 }
 \keyword{internal}
