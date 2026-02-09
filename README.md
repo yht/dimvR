@@ -56,6 +56,7 @@ and explainability studies.
 | Standard test harness (`testthat`) | Implemented | `tests/testthat.R`, `DESCRIPTION` (`Config/testthat/edition: 3`) |
 | Automated smoke benchmark in CI | Implemented | `.github/workflows/smoke-benchmark.yml`, `eval/smoke_benchmark.R` |
 | Benchmark artifact publication | Implemented | CI artifact: `ci_smoke_benchmark.csv`, `ci_smoke_summary.md` |
+| Progress metrics (test count + coverage) | Implemented | CI artifact: `ci_progress_metrics.csv`, `ci_progress_summary.md` |
 
 
 ## Assumptions & Limitations
