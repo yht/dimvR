@@ -11,6 +11,8 @@ jobs:
   smoke-benchmark:
     name: Smoke Benchmark (${{ matrix.os }}, R ${{ matrix.r }})
     runs-on: ${{ matrix.os }}
+    env:
+      MIN_COVERAGE: "40"
     strategy:
       fail-fast: false
       matrix:
@@ -48,6 +50,14 @@ jobs:
         shell: Rscript {0}
         run: source("eval/ci_progress_metrics.R")
 
+      - name: Enforce coverage gate (interim)
+        shell: Rscript {0}
+        run: source("eval/check_coverage_gate.R")
+
+      - name: Publish coverage gate summary
+        run: |
+          cat eval/ci_coverage_gate_summary.md >> $GITHUB_STEP_SUMMARY
+
       - name: Upload smoke benchmark artifacts
         uses: actions/upload-artifact@v4
         with:
@@ -57,3 +67,4 @@ jobs:
             eval/ci_smoke_summary.md
             eval/ci_progress_metrics.csv
             eval/ci_progress_summary.md
+            eval/ci_coverage_gate_summary.md
