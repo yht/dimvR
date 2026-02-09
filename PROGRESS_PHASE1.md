@@ -28,7 +28,7 @@
   - [x] Tests for constraint satisfaction (min/max features)
   - [x] Tests for MI computation validity
 
-- [ ] `examples/day1_feature_selection_demo.R` - Demo script
+- [x] `examples/day1_feature_selection_demo.R` - Demo script
   - [ ] 5 comprehensive examples
   - [ ] Method comparison
   - [ ] High-dimensional case
@@ -74,8 +74,8 @@
    - [ ] Update README with feature selection examples
 
 **Expected Deliverables:**
-- [ ] `tests/testthat/test-feature_selection_edge_cases.R`
-- [ ] `examples/benchmark_feature_selection.R`
+- [x] `tests/testthat/test-feature_selection_edge_cases.R`
+- [x] `examples/benchmark_feature_selection.R`
 - [ ] Benchmark results markdown report
 - [ ] Updated documentation
 
@@ -107,7 +107,7 @@
    - [ ] Update NAMESPACE
 
 **Expected Deliverables:**
-- [ ] `vignettes/feature_selection.Rmd`
+- [x] `vignettes/feature_selection.Rmd`
 - [ ] Updated `R/dimv.R` with integration hooks
 - [ ] Comprehensive function documentation
 
@@ -182,9 +182,9 @@
 
 **Key Metrics:**
 - Functions implemented: 7 internal (feature selection) + 1 exported plot helper
-- Tests written: 10 (target: 15+)
+- Tests written (Feature Selection module specific): 10. Total project test cases: 25 (8 files)
 - Documentation: partial; public-facing docs still needed
-- Code coverage: To be measured
+- Code coverage: 59.32% (per CI report)
 
 ---
 
@@ -241,4 +241,4 @@
 
 ---
 
-Last Updated: 2024 (Day 1 Complete)
+Last Updated: 2026-02-09 (Aligned with latest CI report)
