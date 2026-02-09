@@ -29,6 +29,7 @@ eval/ci_smoke_benchmark.csv
 eval/ci_smoke_summary.md
 eval/ci_progress_metrics.csv
 eval/ci_progress_summary.md
+eval/ci_coverage_gate_summary.md
 
 # OAuth2 token, see https://github.com/hadley/httr/releases/tag/v0.3
 .httr-oauth

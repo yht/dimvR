@@ -57,6 +57,7 @@ and explainability studies.
 | Automated smoke benchmark in CI | Implemented | `.github/workflows/smoke-benchmark.yml`, `eval/smoke_benchmark.R` |
 | Benchmark artifact publication | Implemented | CI artifact: `ci_smoke_benchmark.csv`, `ci_smoke_summary.md` |
 | Progress metrics (test count + coverage) | Implemented | CI artifact: `ci_progress_metrics.csv`, `ci_progress_summary.md` |
+| Interim coverage gate | Implemented | `MIN_COVERAGE=40` via `eval/check_coverage_gate.R` in CI workflow |
 
 
 ## Assumptions & Limitations
