@@ -59,6 +59,12 @@ and explainability studies.
 | Progress metrics (test count + coverage) | Implemented | CI artifact: `ci_progress_metrics.csv`, `ci_progress_summary.md` |
 | Interim coverage gate | Implemented | `MIN_COVERAGE=40` via `eval/check_coverage_gate.R` in CI workflow |
 
+Latest snapshot (2026-02-09):
+- Test files: 8
+- Test cases: 25
+- Estimated coverage: 59.32%
+- Coverage gate status: pass against interim threshold (40%)
+
 
 ## Assumptions & Limitations
 
