@@ -18,3 +18,8 @@ the benchmarking pipeline is alive and reproducible in CI while larger
 multi-dataset benchmarks are still in progress.
 
 Current interim gate: `MIN_COVERAGE=40` (configured in workflow).
+
+Latest local baseline (2026-02-09):
+- test_files: 8
+- test_cases: 25
+- coverage_percent: 59.32
