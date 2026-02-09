@@ -5,7 +5,6 @@
 ^.*\.png$
 ^Rplots\.pdf$
 ^__pycache__/
-^tests/
 ^cleanup\.R$
 ^build\.R$
 ^LICENSE\.md$
