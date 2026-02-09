@@ -2,6 +2,9 @@
 
 > Regularized Conditional Distribution-based Imputation for Missing Data in R
 
+[![R-CMD-check](https://github.com/yht/dimvR/actions/workflows/r-check.yml/badge.svg)](https://github.com/yht/dimvR/actions/workflows/r-check.yml)
+[![Smoke Benchmark](https://github.com/yht/dimvR/actions/workflows/smoke-benchmark.yml/badge.svg)](https://github.com/yht/dimvR/actions/workflows/smoke-benchmark.yml)
+
 This R package implements a regularized conditional distribution-based approach for missing data imputation,
 commonly referred to as **DIMV (Distribution-based Imputation using Conditional Expectation with Regularization)**
 [(Nguyen et al., 2023)](https://arxiv.org/abs/2302.00911). The method imputes missing entries by estimating the
@@ -44,6 +47,15 @@ and explainability studies.
 - **Model-Agnostic Integration:**  
   Output can be used with any downstream statistical or machine learning model, including regression, tree-based
   models, and modern explainability frameworks.
+
+## Engineering Progress (P0)
+
+| Item | Status | Evidence |
+|---|---|---|
+| CI matrix (Debian/Windows, R release) | In progress | `.github/workflows/r-check.yml` |
+| Standard test harness (`testthat`) | Implemented | `tests/testthat.R`, `DESCRIPTION` (`Config/testthat/edition: 3`) |
+| Automated smoke benchmark in CI | Implemented | `.github/workflows/smoke-benchmark.yml`, `eval/smoke_benchmark.R` |
+| Benchmark artifact publication | Implemented | CI artifact: `ci_smoke_benchmark.csv`, `ci_smoke_summary.md` |
 
 
 ## Assumptions & Limitations
