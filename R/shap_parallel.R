@@ -34,7 +34,14 @@ compute_shap_parallel <- function(model, X_train, X_test, nsim = 1000, n_workers
   pred_wrapper <- function(..., newdata = NULL, object = NULL) {
     data <- if (!is.null(newdata)) newdata else object
     if (is.null(data)) stop("pred_wrapper: no data provided")
-    as.numeric(predict(model, xgboost::xgb.DMatrix(as.matrix(data))))
+    mat <- as.matrix(data)
+    # Newer xgboost interfaces prefer matrix input for class 'xgboost';
+    # keep DMatrix fallback for older versions/backends.
+    pred <- tryCatch(
+      stats::predict(model, mat),
+      error = function(e) stats::predict(model, xgboost::xgb.DMatrix(mat))
+    )
+    as.numeric(pred)
   }
   
   # Split workload (ensure consistent chunking across sequential/parallel)

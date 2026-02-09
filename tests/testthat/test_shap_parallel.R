@@ -20,13 +20,13 @@ test_that("compute_shap_parallel runs and returns correct structure", {
   y <- 1.5 * X$x1 - 0.7 * X$x2 + rnorm(40, 0, 0.3)
   
   # Train simple model
-  mod <- xgboost::xgboost(
-    data = as.matrix(X),
-    label = y,
+  mod <- suppressWarnings(xgboost::xgboost(
+    x = as.matrix(X),
+    y = y,
     nrounds = 20,
     objective = "reg:squarederror",
     verbose = 0
-  )
+  ))
   
   # Run SHAP in parallel
   shap_mat <- compute_shap_parallel(
@@ -61,13 +61,13 @@ test_that("parallel and sequential SHAP results are similar", {
   )
   y <- X$x1 + rnorm(25)
   
-  mod <- xgboost::xgboost(
-    data = as.matrix(X),
-    label = y,
+  mod <- suppressWarnings(xgboost::xgboost(
+    x = as.matrix(X),
+    y = y,
     nrounds = 15,
     objective = "reg:squarederror",
     verbose = 0
-  )
+  ))
   
   shap_par <- compute_shap_parallel(mod, X, X, nsim = 10, n_workers = 2)
   shap_seq <- compute_shap_parallel(mod, X, X, nsim = 10, n_workers = 1)
@@ -90,13 +90,13 @@ test_that("compute_shap_parallel gracefully falls back when parallel fails", {
   X <- data.frame(x = rnorm(10))
   y <- rnorm(10)
   
-  mod <- xgboost::xgboost(
-    data = as.matrix(X),
-    label = y,
+  mod <- suppressWarnings(xgboost::xgboost(
+    x = as.matrix(X),
+    y = y,
     nrounds = 5,
     objective = "reg:squarederror",
     verbose = 0
-  )
+  ))
   
   # Force failure: set workers = 0
   expect_warning_or_message <- function(expr) {
