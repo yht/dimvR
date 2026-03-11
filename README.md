@@ -5,68 +5,74 @@
 [![R-CMD-check](https://github.com/yht/dimvR/actions/workflows/r-check.yml/badge.svg)](https://github.com/yht/dimvR/actions/workflows/r-check.yml)
 [![Smoke Benchmark](https://github.com/yht/dimvR/actions/workflows/smoke-benchmark.yml/badge.svg)](https://github.com/yht/dimvR/actions/workflows/smoke-benchmark.yml)
 
-This R package implements a regularized conditional distribution-based approach for missing data imputation,
+This package implements a regularized conditional distribution-based approach to missing data imputation,
 commonly referred to as **DIMV (Distribution-based Imputation using Conditional Expectation with Regularization)**
 [(Nguyen et al., 2023)](https://arxiv.org/abs/2302.00911). The method imputes missing entries by estimating the
-conditional expectation of each variable given the others, while incorporating regularization to improve
-numerical stability and robustness in high-dimensional or multicollinear settings.
+conditional expectation of each variable given the others while applying regularization to improve numerical
+stability and robustness in high-dimensional or multicollinear settings.
 
-The development of this package is motivated by methodological advances discussed in the paper
+The package is motivated by methodological advances discussed in
 *“Explainability of Machine Learning Models under Missing Data”* [(Nguyen et al., 2024)](https://arxiv.org/abs/2407.00411v1),
-which highlights the importance of principled imputation methods for maintaining both predictive performance and
-model interpretability. The **dimvR** package offers a faithful and reproducible R implementation of the
-[DIMV framework](https://github.com/maianhpuco/DIMVImputation), enabling researchers and practitioners to
-incorporate regularized conditional imputation into statistical modeling workflows, machine learning pipelines,
-and explainability studies.
+which emphasizes the importance of principled imputation for preserving both predictive performance and model
+interpretability. The **dimvR** package provides a reproducible R implementation of the
+[DIMV framework](https://github.com/maianhpuco/DIMVImputation) and currently supports core imputation workflows,
+with additional experimental components for benchmarking, explainability, and reporting.
 
-
-## Key Features
+## Current Capability Summary
 
 - **Regularized Conditional Imputation (DIMV):**  
-  Implements conditional expectation–based imputation with ridge regularization for enhanced stability in
-  high-dimensional or multicollinear data settings.
+  Implements conditional expectation-based imputation with ridge regularization for enhanced stability in
+  high-dimensional or multicollinear settings.
 
 - **Deterministic and Multiple Imputation:**  
-  Supports single deterministic imputation as well as multiple imputation by injecting residual uncertainty to
-  better reflect posterior variability.
+  Supports both deterministic imputation and multiple imputation through Gaussian residual noise injection to
+  approximate uncertainty propagation.
 
 - **Convergence-Based Iterative Procedure:**  
-  Iteratively updates missing values variable-by-variable until convergence, ensuring stable and consistent
-  imputations.
+  Iteratively updates missing values variable-by-variable until convergence to support stable and internally
+  consistent imputations.
 
-- **Feature Selection (Optional):**  
-  Adaptive, fixed-threshold, mutual information, and hybrid selection strategies to reduce noise and
-  multicollinearity in conditional models.
+- **Feature Selection (Experimental):**  
+  Provides adaptive, fixed-threshold, mutual information, and hybrid selection strategies to reduce noise and
+  multicollinearity in conditional models. This component remains explicitly experimental.
 
-- **Explainability Pipeline (Optional):**  
-  End-to-end evaluation with SHAP-based explainability and HTML report generation (requires optional dependencies).
+- **Explainability & Benchmark Pipeline (Experimental):**  
+  Provides a regression-oriented evaluation workflow with SHAP-based explainability, pooled benchmarking, and
+  HTML report generation. This component remains experimental.
 
-- **Lightweight Core, Optional Extensions:**  
-  Core imputation is implemented in base R; advanced pipelines use optional packages for modeling and visualization.
+- **R-Native Core Imputation:**  
+  Core DIMV training and imputation are implemented in R with a smaller required dependency set than the
+  experimental benchmarking and reporting workflows.
 
-- **Model-Agnostic Integration:**  
-  Output can be used with any downstream statistical or machine learning model, including regression, tree-based
-  models, and modern explainability frameworks.
+- **Downstream Model Compatibility:**  
+  Imputed outputs can be used in downstream statistical or machine learning workflows. The bundled experimental
+  pipeline currently targets regression using `xgboost`.
 
 ## Engineering Progress (P0)
 
 | Item | Status | Evidence |
 |---|---|---|
-| CI matrix (Debian/Windows, R release) | In progress | `.github/workflows/r-check.yml` |
+| CI matrix (Ubuntu/Windows, R release) | Implemented | `.github/workflows/r-check.yml` |
 | Standard test harness (`testthat`) | Implemented | `tests/testthat.R`, `DESCRIPTION` (`Config/testthat/edition: 3`) |
 | Automated smoke benchmark in CI | Implemented | `.github/workflows/smoke-benchmark.yml`, `eval/smoke_benchmark.R` |
 | Benchmark artifact publication | Implemented | CI artifact: `ci_smoke_benchmark.csv`, `ci_smoke_summary.md` |
 | Progress metrics (test count + coverage) | Implemented | CI artifact: `ci_progress_metrics.csv`, `ci_progress_summary.md` |
 | Interim coverage gate | Implemented | `MIN_COVERAGE=40` via `eval/check_coverage_gate.R` in CI workflow |
 
-Latest snapshot (2026-02-09):
+Latest implementation snapshot (2026-02-09):
 - Test files: 8
 - Test cases: 25
 - Estimated coverage: 59.32%
-- Coverage gate status: pass against interim threshold (40%)
+- Coverage gate: pass against interim threshold (40%)
+
+Current implementation notes:
+- `run_full_pipeline()` is currently a regression-oriented workflow using `xgboost`.
+- Feature selection helpers are exported but explicitly marked experimental in `R/feature_selection.R`.
+- The internal MICE backend exists in `R/mice_backend.R` but is still marked experimental and is not exported.
+- Core imputation uses a smaller required dependency set; benchmarking, SHAP, and report-generation helpers rely on additional suggested packages.
 
 
-## Assumptions & Limitations
+## Current Scope, Assumptions, and Limitations
 
 **Assumptions**:
 
@@ -94,6 +100,14 @@ Latest snapshot (2026-02-09):
 - **Multiple Imputation is Approximate:**  
   Noise injection relies on Gaussian residual estimates, which may inadequately capture uncertainty if residuals 
   deviate significantly from normality.
+
+- **Experimental Pipeline Components:**  
+  Feature selection, SHAP benchmarking, report generation, and the internal MICE backend are still under active
+  refinement and should be treated as experimental interfaces.
+
+- **Current Experiment Scope is Regression-Focused:**  
+  The bundled end-to-end experiment runner currently targets regression with `xgboost`, so classification and
+  alternative model backends are not yet first-class workflow options.
 
 
 ## References
@@ -156,15 +170,30 @@ fs <- select_features_adaptive(X, target_var = "x1", method = "hybrid", max_feat
 fs$selected_features
 ```
 
-## Documentation
+## Documentation and Examples
 
 - Vignette: `vignettes/feature_selection.Rmd`
 - Examples: `examples/day1_feature_selection_demo.R`, `examples/benchmark_feature_selection.R`
 
 
-## To Do
+## Roadmap Overview
 
-* Method Enhancements
-* Explainability & XAI Integration
-* Benchmarking & Evaluation Suite
-* Production & CRAN Readiness
+### This Week
+
+- Align package metadata and documentation with current implementation boundaries.
+- Clarify experimental status for feature selection, SHAP benchmarking, and the internal MICE backend.
+- Audit and simplify `Imports` versus `Suggests` so optional workflows do not overstate core install requirements.
+
+### This Month
+
+- Expand tests for multiple imputation, dependency fallbacks, and regression pipeline edge cases.
+- Refactor experimental pipeline pieces to reduce coupling between core imputation and explainability/reporting.
+- Improve installation and dependency ergonomics for users who only need the core imputation workflow.
+
+### This Quarter
+
+- Generalize the experiment pipeline beyond regression-only evaluation.
+- Stabilize experimental APIs and decide which components should become long-term public interfaces.
+- Advance production and CRAN readiness with tighter checks, documentation polish, and stronger quality gates.
+
+For more detailed execution tracking, see `PROGRESS.md`.
