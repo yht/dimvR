@@ -6,6 +6,7 @@ This document replaces `PROGRESS_PHASE1.md` and summarizes the implementation st
 
 - Package: `dimvR`
 - Current focus: core imputation stabilization, documentation alignment, and clearer separation of experimental components
+- Overall tracked completion: 59.3% (32 of 54 tracked items completed)
 - Latest CI artifact snapshot (2026-02-09):
   - Test files: 8
   - Test cases: 25
@@ -16,6 +17,7 @@ This document replaces `PROGRESS_PHASE1.md` and summarizes the implementation st
 
 ### This Week
 
+- Completion: 75.0% (6 of 8 items completed)
 - [x] Align `README.md` with the current implementation
 - [x] Clarify experimental status for:
   - [x] feature selection
@@ -28,6 +30,7 @@ This document replaces `PROGRESS_PHASE1.md` and summarizes the implementation st
 
 ### This Month
 
+- Completion: 0.0% (0 of 5 items completed)
 - [ ] Add tests for `dimv_impute_multiple()`
 - [ ] Add tests for optional dependency fallbacks
 - [ ] Add regression pipeline edge-case tests
@@ -36,6 +39,7 @@ This document replaces `PROGRESS_PHASE1.md` and summarizes the implementation st
 
 ### This Quarter
 
+- Completion: 0.0% (0 of 4 items completed)
 - [ ] Generalize `run_full_pipeline()` beyond regression
 - [ ] Stabilize experimental APIs that are candidates for long-term public support
 - [ ] Evaluate alternative model backends beyond `xgboost`
@@ -45,6 +49,7 @@ This document replaces `PROGRESS_PHASE1.md` and summarizes the implementation st
 
 ### Core Imputation
 
+- Completion: 100.0% (6 of 6 items completed)
 - [x] `dimv_train()`
 - [x] `dimv_impute_new()`
 - [x] `dimv_impute_multiple()`
@@ -54,6 +59,7 @@ This document replaces `PROGRESS_PHASE1.md` and summarizes the implementation st
 
 ### Feature Selection
 
+- Completion: 77.8% (7 of 9 items completed)
 - [x] `select_features_adaptive()`
 - [x] `select_adaptive_threshold()`
 - [x] `select_fixed_threshold()`
@@ -66,6 +72,7 @@ This document replaces `PROGRESS_PHASE1.md` and summarizes the implementation st
 
 ### Explainability and Benchmarking
 
+- Completion: 57.1% (4 of 7 items completed)
 - [x] `run_full_pipeline()`
 - [x] `compute_shap_parallel()`
 - [x] `generate_report()`
@@ -76,6 +83,7 @@ This document replaces `PROGRESS_PHASE1.md` and summarizes the implementation st
 
 ### Additional Backends
 
+- Completion: 50.0% (2 of 4 items completed)
 - [x] Mean imputer helpers
 - [x] Internal MICE backend available
 - [ ] Export and stabilize the MICE backend
@@ -83,6 +91,7 @@ This document replaces `PROGRESS_PHASE1.md` and summarizes the implementation st
 
 ## Documentation Checklist
 
+- Completion: 60.0% (3 of 5 items completed)
 - [x] `README.md` updated to match the current codebase
 - [x] Feature selection vignette available
 - [x] Example scripts available in `examples/`
@@ -91,6 +100,7 @@ This document replaces `PROGRESS_PHASE1.md` and summarizes the implementation st
 
 ## Infrastructure Checklist
 
+- Completion: 66.7% (4 of 6 items completed)
 - [x] `testthat` configured and active
 - [x] CI checks for Ubuntu and Windows
 - [x] Smoke benchmark workflow
@@ -104,9 +114,9 @@ This document replaces `PROGRESS_PHASE1.md` and summarizes the implementation st
 - Feature selection, report generation, SHAP benchmarking, and the internal MICE backend are treated as experimental components.
 - Short-term work is prioritized toward documentation alignment, metadata cleanup, and test quality rather than major architectural refactoring.
 
-## Next Actions
+## Priorities for Tomorrow
 
-1. Remove suggested dependencies that are no longer directly required.
-2. Add tests for multiple imputation and optional dependency fallbacks.
-3. Reconcile coverage and progress reporting artifacts in CI.
-4. Decide which experimental components should be stabilized first.
+1. Complete the dependency cleanup review, including any remaining stale `Suggests` entries and runtime checks.
+2. Add targeted tests for `dimv_impute_multiple()` and optional dependency fallback paths.
+3. Review CI-generated progress and coverage artifacts and define a single reporting baseline.
+4. Identify and document the next small implementation gaps that can be closed without major architectural changes.
