@@ -64,6 +64,7 @@ Latest implementation snapshot (2026-02-09):
 - Test cases: 25
 - Estimated coverage: 59.32%
 - Coverage gate: pass against interim threshold (40%)
+- Tracked implementation completion: 59.3% (based on `PROGRESS.md`)
 
 Current implementation notes:
 - `run_full_pipeline()` is currently a regression-oriented workflow using `xgboost`.
@@ -180,18 +181,21 @@ fs$selected_features
 
 ### This Week
 
+- Completion: 100.0% at the README roadmap level (3 of 3 high-level items completed)
 - Align package metadata and documentation with current implementation boundaries.
 - Clarify experimental status for feature selection, SHAP benchmarking, and the internal MICE backend.
 - Audit and simplify `Imports` versus `Suggests` so optional workflows do not overstate core install requirements.
 
 ### This Month
 
+- Completion: 0.0% (0 of 3 high-level items completed)
 - Expand tests for multiple imputation, dependency fallbacks, and regression pipeline edge cases.
 - Refactor experimental pipeline pieces to reduce coupling between core imputation and explainability/reporting.
 - Improve installation and dependency ergonomics for users who only need the core imputation workflow.
 
 ### This Quarter
 
+- Completion: 0.0% (0 of 3 high-level items completed)
 - Generalize the experiment pipeline beyond regression-only evaluation.
 - Stabilize experimental APIs and decide which components should become long-term public interfaces.
 - Advance production and CRAN readiness with tighter checks, documentation polish, and stronger quality gates.
