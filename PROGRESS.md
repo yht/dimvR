@@ -7,7 +7,7 @@ This document replaces `PROGRESS_PHASE1.md` and summarizes the implementation st
 - Package: `dimvR`
 - Current focus: core imputation stabilization, documentation alignment, and clearer separation of experimental components
 - Overall tracked completion: 59.3% (32 of 54 tracked items completed)
-- Latest CI artifact snapshot (2026-02-09):
+- Latest CI artifact snapshot (2026-03-30):
   - Test files: 8
   - Test cases: 25
   - Estimated coverage: 59.32%
@@ -25,8 +25,8 @@ This document replaces `PROGRESS_PHASE1.md` and summarizes the implementation st
   - [x] internal MICE backend
 - [x] Perform an initial `Imports` versus `Suggests` audit
 - [x] Reduce the required dependency set in `DESCRIPTION`
-- [ ] Remove any remaining suggested dependencies that are no longer directly used
-- [ ] Reconcile progress and coverage artifacts so reported metrics are consistent
+- [x] Remove any remaining suggested dependencies that are no longer directly used
+- [x] Reconcile progress and coverage artifacts so reported metrics are consistent
 
 ### This Month
 

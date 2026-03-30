@@ -28,8 +28,6 @@ Suggests:
     ggplot2,
     knitr,
     mice,
-    miceadds,
-    mlbench,
     rmarkdown,
     testthat (>= 3.0.0),
     viridis,
