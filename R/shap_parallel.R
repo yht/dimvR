@@ -101,7 +101,9 @@ compute_shap_parallel <- function(model, X_train, X_test, nsim = 1000, n_workers
   
   # If parallel failed => sequential fallback
   if (is.null(result)) {
-    message("[SHAP] Parallel execution failed => running sequentially.")
+    if (isTRUE(try_parallel)) {
+      message("[SHAP] Parallel execution failed => running sequentially.")
+    }
     future::plan(future::sequential)
     
     split_seeds <- seed_use + seq_along(splits)

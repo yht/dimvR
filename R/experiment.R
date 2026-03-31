@@ -125,8 +125,15 @@ run_full_pipeline <- function(X, y,
   if ("mice" %in% imputers) .require_pkg("mice")
   
   set.seed(seed)
-  X <- as.data.frame(lapply(X, as.numeric))
+  X <- as.data.frame(X)
+  X[] <- lapply(X, as.numeric)
   y <- as.numeric(y)
+  if (nrow(X) != length(y)) {
+    stop("X and y must have the same number of rows.")
+  }
+  if (nrow(X) < 2) {
+    stop("X must contain at least 2 rows.")
+  }
   
   results <- list()
   
@@ -140,11 +147,10 @@ run_full_pipeline <- function(X, y,
   
   # ---------- Reference model & SHAP on fully observed data ----------
   ref_mod <- xgboost::xgboost(
-    data = as.matrix(X_train_orig),
-    label = y_train_orig,
+    x = as.matrix(X_train_orig),
+    y = y_train_orig,
     nrounds = 200,
-    objective = "reg:squarederror",
-    verbose = 0
+    objective = "reg:squarederror"
   )
   ref_shap <- compute_shap_parallel(ref_mod, X_train_orig, X_test_orig,
                                     nsim = nsim, n_workers = workers)
@@ -152,15 +158,12 @@ run_full_pipeline <- function(X, y,
   for (rate in missing_rates) {
     for (mech in mechanisms) {
       
-      cat("=== rate:", rate, "| mechanism:", mech, "===\n")
       X_miss_full <- simulate_missing(X, rate = rate, mechanism = mech)
       
       X_train_miss <- X_miss_full[idx, , drop = FALSE]
       X_test_miss  <- X_miss_full[-idx, , drop = FALSE]
       
       for (imp in imputers) {
-        cat(" => Imputer:", imp, "\n")
-        
         Q_m_pred <- numeric(m_imp)  # pooled estimands (per draw)
         U_m_pred <- numeric(m_imp)  # within-imputation variances
         Q_m_shap <- numeric(m_imp)
@@ -177,13 +180,12 @@ run_full_pipeline <- function(X, y,
             Xte_k <- imp_tests[[k]]
             
             mod_k <- xgboost::xgboost(
-              data = as.matrix(Xtr_k),
-              label = y_train_orig,
+              x = as.matrix(Xtr_k),
+              y = y_train_orig,
               nrounds = 200,
-              objective = "reg:squarederror",
-              verbose = 0
+              objective = "reg:squarederror"
             )
-            pred_k <- stats::predict(mod_k, xgboost::xgb.DMatrix(as.matrix(Xte_k)))
+            pred_k <- stats::predict(mod_k, as.matrix(Xte_k))
             Q_m_pred[k] <- mean((pred_k - y_test_orig)^2)
             U_m_pred[k] <- within_var_mse(y_test_orig, pred_k)
             
@@ -199,13 +201,12 @@ run_full_pipeline <- function(X, y,
           Xte_imp  <- apply_mean_imputer(imp_mean, X_test_miss)
           
           mod <- xgboost::xgboost(
-            data = as.matrix(Xtr_imp),
-            label = y_train_orig,
+            x = as.matrix(Xtr_imp),
+            y = y_train_orig,
             nrounds = 200,
-            objective = "reg:squarederror",
-            verbose = 0
+            objective = "reg:squarederror"
           )
-          pred <- stats::predict(mod, xgboost::xgb.DMatrix(as.matrix(Xte_imp)))
+          pred <- stats::predict(mod, as.matrix(Xte_imp))
           mse_pred <- mean((pred - y_test_orig)^2)
           Q_m_pred[] <- mse_pred
           U_m_pred[] <- within_var_mse(y_test_orig, pred)
@@ -235,13 +236,12 @@ run_full_pipeline <- function(X, y,
             Xte_k <- imp_tests[[k]]
             
             mod_k <- xgboost::xgboost(
-              data = as.matrix(Xtr_k),
-              label = y_train_orig,
+              x = as.matrix(Xtr_k),
+              y = y_train_orig,
               nrounds = 200,
-              objective = "reg:squarederror",
-              verbose = 0
+              objective = "reg:squarederror"
             )
-            pred_k <- stats::predict(mod_k, xgboost::xgb.DMatrix(as.matrix(Xte_k)))
+            pred_k <- stats::predict(mod_k, as.matrix(Xte_k))
             Q_m_pred[k] <- mean((pred_k - y_test_orig)^2)
             U_m_pred[k] <- within_var_mse(y_test_orig, pred_k)
             

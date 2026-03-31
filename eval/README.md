@@ -19,7 +19,14 @@ multi-dataset benchmarks are still in progress.
 
 Current interim gate: `MIN_COVERAGE=40` (configured in workflow).
 
-Latest local baseline (2026-02-09):
-- test_files: 8
-- test_cases: 25
-- coverage_percent: 59.32
+Latest checked-in CI baseline (2026-03-30):
+- test_files: 11
+- test_cases: 30
+- coverage_percent: NA
+
+Working-tree review during documentation pass (2026-03-31):
+- test_files: 10
+- test_cases: 29
+- coverage_percent: not re-measured
+
+These numbers indicate that the checked-in progress artifacts should be regenerated so the repository metrics match the current tree.

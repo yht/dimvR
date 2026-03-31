@@ -56,15 +56,14 @@ with additional experimental components for benchmarking, explainability, and re
 | Standard test harness (`testthat`) | Implemented | `tests/testthat.R`, `DESCRIPTION` (`Config/testthat/edition: 3`) |
 | Automated smoke benchmark in CI | Implemented | `.github/workflows/smoke-benchmark.yml`, `eval/smoke_benchmark.R` |
 | Benchmark artifact publication | Implemented | CI artifact: `ci_smoke_benchmark.csv`, `ci_smoke_summary.md` |
-| Progress metrics (test count + coverage) | Implemented | CI artifact: `ci_progress_metrics.csv`, `ci_progress_summary.md` |
+| Progress metrics (test count + coverage) | Implemented | `eval/ci_progress_metrics.csv`, `eval/ci_progress_summary.md` |
 | Interim coverage gate | Implemented | `MIN_COVERAGE=40` via `eval/check_coverage_gate.R` in CI workflow |
 
-Latest implementation snapshot (2026-02-09):
-- Test files: 8
-- Test cases: 25
-- Estimated coverage: 59.32%
-- Coverage gate: pass against interim threshold (40%)
-- Tracked implementation completion: 59.3% (based on `PROGRESS.md`)
+Execution snapshot (2026-03-31):
+- Passing local `testthat::test_local('.')` run
+- CI progress artifact regenerated: 10 test files, 29 test cases, 76.19% estimated coverage
+- Coverage gate status: pass against interim threshold (40%)
+- Tracked implementation completion: 68.5% (based on `PROGRESS.md`)
 
 Current implementation notes:
 - `run_full_pipeline()` is currently a regression-oriented workflow using `xgboost`.
@@ -179,25 +178,25 @@ fs$selected_features
 
 ## Roadmap Overview
 
-### This Week
+### Completed Through 2026-03-31
 
-- Completion: 100.0% at the README roadmap level (3 of 3 high-level items completed)
-- Align package metadata and documentation with current implementation boundaries.
-- Clarify experimental status for feature selection, SHAP benchmarking, and the internal MICE backend.
+- Align package metadata and documentation with the current implementation boundaries.
+- Clarify experimental status for feature selection, SHAP benchmarking, report generation, and the internal MICE backend.
 - Audit and simplify `Imports` versus `Suggests` so optional workflows do not overstate core install requirements.
+- Add direct tests for `dimv_impute_multiple()`.
+- Add regression pipeline edge-case tests.
 
-### This Month
+### Planned For April 2026
 
-- Completion: 0.0% (0 of 3 high-level items completed)
-- Expand tests for multiple imputation, dependency fallbacks, and regression pipeline edge cases.
-- Refactor experimental pipeline pieces to reduce coupling between core imputation and explainability/reporting.
+- Add tests for optional dependency fallback behavior.
+- Reduce coupling between core imputation and explainability/reporting modules.
 - Improve installation and dependency ergonomics for users who only need the core imputation workflow.
 
-### This Quarter
+### Planned For Q2 2026
 
-- Completion: 0.0% (0 of 3 high-level items completed)
 - Generalize the experiment pipeline beyond regression-only evaluation.
 - Stabilize experimental APIs and decide which components should become long-term public interfaces.
+- Evaluate alternative model backends beyond `xgboost`.
 - Advance production and CRAN readiness with tighter checks, documentation polish, and stronger quality gates.
 
 For more detailed execution tracking, see `PROGRESS.md`.
