@@ -59,11 +59,11 @@ with additional experimental components for benchmarking, explainability, and re
 | Progress metrics (test count + coverage) | Implemented | `eval/ci_progress_metrics.csv`, `eval/ci_progress_summary.md` |
 | Interim coverage gate | Implemented | `MIN_COVERAGE=40` via `eval/check_coverage_gate.R` in CI workflow |
 
-Execution snapshot (2026-03-31):
+Execution snapshot (2026-04-01):
 - Passing local `testthat::test_local('.')` run
-- CI progress artifact regenerated: 10 test files, 29 test cases, 76.19% estimated coverage
+- CI progress artifact regenerated: 11 test files, 33 test cases, 76.73% estimated coverage
 - Coverage gate status: pass against interim threshold (40%)
-- Tracked implementation completion: 68.5% (based on `PROGRESS.md`)
+- Tracked implementation completion: 70.4% (based on `PROGRESS.md`)
 
 Current implementation notes:
 - `run_full_pipeline()` is currently a regression-oriented workflow using `xgboost`.
@@ -178,13 +178,14 @@ fs$selected_features
 
 ## Roadmap Overview
 
-### Completed Through 2026-03-31
+### Completed Through 2026-04-01
 
 - Align package metadata and documentation with the current implementation boundaries.
 - Clarify experimental status for feature selection, SHAP benchmarking, report generation, and the internal MICE backend.
 - Audit and simplify `Imports` versus `Suggests` so optional workflows do not overstate core install requirements.
 - Add direct tests for `dimv_impute_multiple()`.
 - Add regression pipeline edge-case tests.
+- Add runtime-check coverage tests for optional dependency paths.
 
 ### Planned For April 2026
 

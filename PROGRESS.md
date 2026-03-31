@@ -6,17 +6,18 @@ This document replaces `PROGRESS_PHASE1.md` and summarizes the implementation st
 
 - Package: `dimvR`
 - Current focus: core imputation stabilization, documentation alignment, and clearer separation of experimental components
-- Overall tracked completion: 68.5% (37 of 54 tracked items completed)
-- Latest executed local verification snapshot (2026-03-31):
-  - Test files: 10
-  - Test cases: 29
-  - Coverage percent: 76.19
+- Coverage target for Q2 2026: raise automated test coverage to at least 80%
+- Overall tracked completion: 70.4% (38 of 54 tracked items completed)
+- Latest executed local verification snapshot (2026-04-01):
+  - Test files: 11
+  - Test cases: 33
+  - Coverage percent: 76.73
   - Coverage gate: pass at the interim 40% threshold
   - Local `testthat::test_local('.')`: pass
 
 ## Roadmap Execution Notes
 
-### Completed Through 2026-03-31
+### Completed Through 2026-04-01
 
 - [x] Align `README.md` with the current implementation
 - [x] Clarify experimental status for:
@@ -30,15 +31,17 @@ This document replaces `PROGRESS_PHASE1.md` and summarizes the implementation st
 - [x] Add tests for `dimv_impute_multiple()`
 - [x] Add regression pipeline edge-case tests
 - [x] Update `run_full_pipeline()` for the active `xgboost` interface and rerun tests
+- [x] Add tests for optional dependency fallbacks
 
 ### Planned For April 2026
 
-- [ ] Add tests for optional dependency fallbacks
 - [ ] Reduce coupling between core imputation and explainability/reporting modules
 - [ ] Improve installation ergonomics for users who only need the core imputation workflow
+- [ ] Reach at least 78% automated test coverage as the April checkpoint toward the Q2 80% target
 
 ### Planned For Q2 2026
 
+- [ ] Raise automated test coverage from 76.19% to at least 80%
 - [ ] Generalize `run_full_pipeline()` beyond regression
 - [ ] Stabilize experimental APIs that are candidates for long-term public support
 - [ ] Evaluate alternative model backends beyond `xgboost`
@@ -71,14 +74,14 @@ This document replaces `PROGRESS_PHASE1.md` and summarizes the implementation st
 
 ### Explainability and Benchmarking
 
-- Completion: 57.1% (4 of 7 items completed)
+- Completion: 71.4% (5 of 7 items completed)
 - [x] `run_full_pipeline()`
 - [x] `compute_shap_parallel()`
 - [x] `generate_report()`
 - [x] CI smoke benchmark workflow
+- [x] Strengthen optional dependency fallback behavior
 - [ ] Add support for non-`xgboost` backends
 - [ ] Add support for non-regression tasks
-- [ ] Strengthen optional dependency fallback behavior
 
 ### Additional Backends
 
@@ -99,13 +102,14 @@ This document replaces `PROGRESS_PHASE1.md` and summarizes the implementation st
 
 ## Infrastructure Checklist
 
-- Completion: 71.4% (5 of 7 items completed)
+- Completion: 85.7% (6 of 7 items completed)
 - [x] `testthat` configured and active
 - [x] CI checks for Ubuntu and Windows
 - [x] Smoke benchmark workflow
 - [x] Interim coverage gate
 - [x] Regenerated local progress and coverage artifacts against the current repository state
-- [ ] Consolidate a single source of truth for coverage metrics
+- [x] Treat `dimvExplainR/eval/` as the active coverage/progress baseline and root `eval/` as archival/stale unless explicitly regenerated
+- [x] Consolidate a single source of truth for coverage metrics
 - [ ] Review dependency metadata after the current refactor
 
 ## Current Working Assumptions
@@ -117,6 +121,7 @@ This document replaces `PROGRESS_PHASE1.md` and summarizes the implementation st
 ## Priorities for 2026-04-01
 
 1. Complete the dependency cleanup review, including any remaining stale `Suggests` entries and runtime checks.
-2. Add targeted tests for optional dependency fallback paths.
-3. Review CI-generated progress and coverage artifacts and define a single reporting baseline.
-4. Identify and document the next small implementation gaps that can be closed without major architectural changes.
+2. Build on the new optional dependency fallback tests with additional low-cost edge-case coverage.
+3. Keep `dimvExplainR/eval/` as the active reporting baseline and refresh it after meaningful test changes.
+4. Raise coverage to at least 78% during April by prioritizing low-risk tests around fallback paths and decoupled core helpers.
+5. Identify and document the next small implementation gaps that can be closed without major architectural changes.
