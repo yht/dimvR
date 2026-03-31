@@ -28,16 +28,15 @@ test_that("run_full_pipeline smoke test returns expected columns", {
   )
   y <- 1.2 * X$x1 - 0.5 * X$x2 + rnorm(36, sd = 0.2)
 
-  # Guard against interface differences in newer xgboost releases.
+  # Guard against interface differences in the active xgboost release.
   probe_ok <- tryCatch({
     mod_probe <- suppressWarnings(xgboost::xgboost(
       x = as.matrix(X),
       y = y,
       nrounds = 2,
-      objective = "reg:squarederror",
-      verbose = 0
+      objective = "reg:squarederror"
     ))
-    pred_probe <- predict(mod_probe, xgboost::xgb.DMatrix(as.matrix(X[1:2, , drop = FALSE])))
+    pred_probe <- predict(mod_probe, as.matrix(X[1:2, , drop = FALSE]))
     is.numeric(pred_probe)
   }, error = function(e) FALSE)
   if (!isTRUE(probe_ok)) {
