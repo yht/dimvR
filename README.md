@@ -59,10 +59,9 @@ with additional experimental components for benchmarking, explainability, and re
 | Progress metrics (test count + coverage) | Implemented | `eval/ci_progress_metrics.csv`, `eval/ci_progress_summary.md` |
 | Interim coverage gate | Implemented | `MIN_COVERAGE=40` via `eval/check_coverage_gate.R` in CI workflow |
 
-Execution snapshot (2026-04-01):
-- Passing local `testthat::test_local('.')` run
-- CI progress artifact regenerated: 11 test files, 33 test cases, 76.73% estimated coverage
-- Coverage gate status: pass against interim threshold (40%)
+Execution snapshot:
+- Verified active snapshot (2026-04-06): 11 test files, 34 test cases, 76.87% estimated coverage
+- Coverage gate status at that verified snapshot: pass against interim threshold (40%)
 - Tracked implementation completion: 70.4% (based on `PROGRESS.md`)
 
 Current implementation notes:
@@ -70,6 +69,7 @@ Current implementation notes:
 - Feature selection helpers are exported but explicitly marked experimental in `R/feature_selection.R`.
 - The internal MICE backend exists in `R/mice_backend.R` but is still marked experimental and is not exported.
 - Core imputation uses a smaller required dependency set; benchmarking, SHAP, and report-generation helpers rely on additional suggested packages.
+- `dimvExplainR/eval/` is the active checked-in progress/coverage baseline; the root `eval/` folder is archival unless explicitly regenerated.
 
 
 ## Current Scope, Assumptions, and Limitations
@@ -183,6 +183,7 @@ fs$selected_features
 - Align package metadata and documentation with the current implementation boundaries.
 - Clarify experimental status for feature selection, SHAP benchmarking, report generation, and the internal MICE backend.
 - Audit and simplify `Imports` versus `Suggests` so optional workflows do not overstate core install requirements.
+- Remove stale optional metadata/runtime checks that no longer match the active implementation.
 - Add direct tests for `dimv_impute_multiple()`.
 - Add regression pipeline edge-case tests.
 - Add runtime-check coverage tests for optional dependency paths.
@@ -192,6 +193,7 @@ fs$selected_features
 - Add tests for optional dependency fallback behavior.
 - Reduce coupling between core imputation and explainability/reporting modules.
 - Improve installation and dependency ergonomics for users who only need the core imputation workflow.
+- Build on the refreshed 2026-04-06 coverage snapshot with additional low-risk tests to move toward the April 78% checkpoint.
 
 ### Planned For Q2 2026
 

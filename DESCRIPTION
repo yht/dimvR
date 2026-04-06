@@ -21,7 +21,6 @@ Imports:
     digest
 VignetteBuilder: knitr
 Suggests:
-    dplyr,
     fastshap,
     future,
     future.apply,

@@ -28,9 +28,6 @@ generate_report <- function(results,
   if (!requireNamespace("knitr", quietly = TRUE)) {
     stop("Package 'knitr' is required but not installed. Please install it with: install.packages('knitr')")
   }
-  if (!requireNamespace("dplyr", quietly = TRUE)) {
-    stop("Package 'dplyr' is required but not installed. Please install it with: install.packages('dplyr')")
-  }
   if (!requireNamespace("viridis", quietly = TRUE)) {
     stop("Package 'viridis' is required but not installed. Please install it with: install.packages('viridis')")
   }

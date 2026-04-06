@@ -85,3 +85,17 @@ test_that("generate_report stops when a report dependency is unavailable", {
     "Package 'ggplot2' is required but not installed"
   )
 })
+
+test_that("plot_feature_selection stops when ggplot2 is unavailable", {
+  testthat::local_mocked_bindings(
+    requireNamespace = function(pkg, quietly = TRUE) {
+      !identical(pkg, "ggplot2")
+    },
+    .package = "base"
+  )
+
+  expect_error(
+    plot_feature_selection(data.frame(feature = "x1", score = 1)),
+    "Package 'ggplot2' is required for plot_feature_selection\\(\\)"
+  )
+})

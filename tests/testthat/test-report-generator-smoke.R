@@ -1,6 +1,5 @@
 test_that("generate_report creates HTML output from minimal pooled results", {
   skip_if_not_installed("ggplot2")
-  skip_if_not_installed("dplyr")
   skip_if_not_installed("knitr")
   skip_if_not_installed("viridis")
 

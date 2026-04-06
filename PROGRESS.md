@@ -8,12 +8,12 @@ This document replaces `PROGRESS_PHASE1.md` and summarizes the implementation st
 - Current focus: core imputation stabilization, documentation alignment, and clearer separation of experimental components
 - Coverage target for Q2 2026: raise automated test coverage to at least 80%
 - Overall tracked completion: 70.4% (38 of 54 tracked items completed)
-- Latest executed local verification snapshot (2026-04-01):
+- Last verified coverage snapshot (2026-04-06):
   - Test files: 11
-  - Test cases: 33
-  - Coverage percent: 76.73
+  - Test cases: 34
+  - Coverage percent: 76.87
   - Coverage gate: pass at the interim 40% threshold
-  - Local `testthat::test_local('.')`: pass
+  - Local `testthat::test_local('.')`: last documented passing baseline remains valid
 
 ## Roadmap Execution Notes
 
@@ -41,7 +41,7 @@ This document replaces `PROGRESS_PHASE1.md` and summarizes the implementation st
 
 ### Planned For Q2 2026
 
-- [ ] Raise automated test coverage from 76.19% to at least 80%
+- [ ] Raise automated test coverage from 76.87% to at least 80%
 - [ ] Generalize `run_full_pipeline()` beyond regression
 - [ ] Stabilize experimental APIs that are candidates for long-term public support
 - [ ] Evaluate alternative model backends beyond `xgboost`
@@ -110,7 +110,7 @@ This document replaces `PROGRESS_PHASE1.md` and summarizes the implementation st
 - [x] Regenerated local progress and coverage artifacts against the current repository state
 - [x] Treat `dimvExplainR/eval/` as the active coverage/progress baseline and root `eval/` as archival/stale unless explicitly regenerated
 - [x] Consolidate a single source of truth for coverage metrics
-- [ ] Review dependency metadata after the current refactor
+- [x] Review dependency metadata after the current refactor
 
 ## Current Working Assumptions
 
@@ -120,8 +120,7 @@ This document replaces `PROGRESS_PHASE1.md` and summarizes the implementation st
 
 ## Priorities for 2026-04-01
 
-1. Complete the dependency cleanup review, including any remaining stale `Suggests` entries and runtime checks.
-2. Build on the new optional dependency fallback tests with additional low-cost edge-case coverage.
-3. Keep `dimvExplainR/eval/` as the active reporting baseline and refresh it after meaningful test changes.
-4. Raise coverage to at least 78% during April by prioritizing low-risk tests around fallback paths and decoupled core helpers.
-5. Identify and document the next small implementation gaps that can be closed without major architectural changes.
+1. Build on the new optional dependency fallback tests with additional low-cost edge-case coverage.
+2. Keep `dimvExplainR/eval/` as the active reporting baseline and refresh it after meaningful test changes.
+3. Raise coverage from 76.87% to at least 78% during April by prioritizing low-risk tests around fallback paths and decoupled core helpers.
+4. Identify and document the next small implementation gaps that can be closed without major architectural changes.

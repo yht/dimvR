@@ -1,7 +1,9 @@
 # CI Smoke Benchmark
 
-This folder contains the script used by GitHub Actions to run a lightweight
-benchmark smoke test:
+This folder is the active checked-in evaluation and progress baseline for the
+package source tree. It contains the scripts used by GitHub Actions to run a
+lightweight benchmark smoke test, summarize test/progress metrics, and enforce
+the interim coverage gate:
 
 - Script: `eval/smoke_benchmark.R`
 - Progress metrics script: `eval/ci_progress_metrics.R`
@@ -19,14 +21,12 @@ multi-dataset benchmarks are still in progress.
 
 Current interim gate: `MIN_COVERAGE=40` (configured in workflow).
 
-Latest checked-in CI baseline (2026-03-30):
+Authoritative checked-in snapshot (2026-04-01):
 - test_files: 11
-- test_cases: 30
-- coverage_percent: NA
+- test_cases: 33
+- coverage_percent: 76.73
 
-Working-tree review during documentation pass (2026-03-31):
-- test_files: 10
-- test_cases: 29
-- coverage_percent: not re-measured
-
-These numbers indicate that the checked-in progress artifacts should be regenerated so the repository metrics match the current tree.
+Status notes:
+- `dimvExplainR/eval/` is the active reporting baseline for package work.
+- The root-level `../eval/` folder is archival/stale unless it is explicitly regenerated.
+- Refresh the artifacts in this folder after meaningful test or coverage changes, then sync the resulting snapshot into `PROGRESS.md` and any active package-facing docs.

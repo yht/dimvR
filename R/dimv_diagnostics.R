@@ -46,6 +46,10 @@ feature_select_score <- function(X) {
 #' @export
 #' @import ggplot2
 plot_feature_selection <- function(score_df) {
+  if (!requireNamespace("ggplot2", quietly = TRUE)) {
+    stop("Package 'ggplot2' is required for plot_feature_selection().")
+  }
+
   score_df$feature <- factor(score_df$feature, levels = score_df$feature[order(score_df$score)])
   
   ggplot2::ggplot(score_df, ggplot2::aes(x = feature, y = score)) +
