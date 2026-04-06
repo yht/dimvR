@@ -58,3 +58,5 @@ print(imp)
 
 - Feature selection is currently experimental and may change.
 - MI is a simple histogram-based estimator for speed and portability.
+- Current stabilization direction is to keep `select_features_adaptive()` as the only public contract candidate while leaving method-specific helpers as internal implementation details.
+- Future documentation updates should define a stable return object with canonical selected-feature indexes plus explicit method and fallback metadata.

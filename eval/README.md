@@ -21,10 +21,10 @@ multi-dataset benchmarks are still in progress.
 
 Current interim gate: `MIN_COVERAGE=40` (configured in workflow).
 
-Authoritative checked-in snapshot (2026-04-01):
+Authoritative checked-in snapshot (2026-04-06):
 - test_files: 11
-- test_cases: 33
-- coverage_percent: 76.73
+- test_cases: 34
+- coverage_percent: 76.87
 
 Status notes:
 - `dimvExplainR/eval/` is the active reporting baseline for package work.

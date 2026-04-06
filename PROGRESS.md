@@ -72,6 +72,20 @@ This document replaces `PROGRESS_PHASE1.md` and summarizes the implementation st
 - [ ] Stabilize the feature selection API
 - [ ] Expand best-practice documentation
 
+Feature selection stabilization direction:
+- Treat `select_features_adaptive()` as the only stability candidate for the public API surface.
+- Keep helper selectors and `compute_simple_mi()` as internal implementation details.
+- Preserve `selected_features` as the canonical downstream field because `dimv_train()` depends on it today.
+- Add stable metadata fields for normalized target identity, selection method, fallback usage, and candidate/selection counts.
+- Replace ambiguous score semantics with a documented ranking structure that is consistent across methods.
+
+Feature selection stabilization to-do:
+- [ ] Freeze and document the return-object contract for `select_features_adaptive()`
+- [ ] Add stricter argument validation for `target_var`, `min_features`, `max_features`, `threshold`, and `nbins`
+- [ ] Make fallback selection paths explicit in the returned metadata
+- [ ] Add contract tests for output shape consistency across `adaptive`, `fixed`, `mi`, and `hybrid`
+- [ ] Document feature selection best practices and edge-case behavior in user-facing docs
+
 ### Explainability and Benchmarking
 
 - Completion: 71.4% (5 of 7 items completed)
@@ -118,9 +132,10 @@ This document replaces `PROGRESS_PHASE1.md` and summarizes the implementation st
 - Feature selection, report generation, SHAP benchmarking, and the internal MICE backend are treated as experimental components.
 - Short-term work is prioritized toward documentation alignment, metadata cleanup, and test quality rather than major architectural refactoring.
 
-## Priorities for 2026-04-01
+## Current Priorities (Week of 2026-04-06)
 
 1. Build on the new optional dependency fallback tests with additional low-cost edge-case coverage.
 2. Keep `dimvExplainR/eval/` as the active reporting baseline and refresh it after meaningful test changes.
-3. Raise coverage from 76.87% to at least 78% during April by prioritizing low-risk tests around fallback paths and decoupled core helpers.
-4. Identify and document the next small implementation gaps that can be closed without major architectural changes.
+3. Freeze the intended `select_features_adaptive()` API contract before deeper feature-selection work proceeds.
+4. Raise coverage from 76.87% to at least 78% during April by prioritizing low-risk tests around fallback paths and decoupled core helpers.
+5. Identify and document the next small implementation gaps that can be closed without major architectural changes.

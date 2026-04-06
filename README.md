@@ -71,6 +71,26 @@ Current implementation notes:
 - Core imputation uses a smaller required dependency set; benchmarking, SHAP, and report-generation helpers rely on additional suggested packages.
 - `dimvExplainR/eval/` is the active checked-in progress/coverage baseline; the root `eval/` folder is archival unless explicitly regenerated.
 
+## Feature Selection Direction
+
+Current audit conclusion:
+- `select_features_adaptive()` is already the de facto public entry point for feature selection because it is exported, tested, documented, and used by `dimv_train()`.
+- The current output shape is useful but not yet a stable API contract; field meanings remain partly ambiguous across `adaptive`, `fixed`, `mi`, and `hybrid` modes.
+- Internal helper functions such as `select_adaptive_threshold()`, `select_fixed_threshold()`, `select_mutual_information()`, `select_hybrid()`, and `compute_simple_mi()` should remain implementation details rather than becoming user-facing stability commitments.
+
+Proposed stable contract for `select_features_adaptive()`:
+- Keep `selected_features` as the primary downstream field and guarantee that it is always an integer vector of valid column indexes.
+- Keep `selected_names` aligned 1:1 with `selected_features`.
+- Normalize target metadata into stable fields such as `target_index` and `target_name`.
+- Add explicit metadata for `method`, `n_selected`, `candidate_count`, `threshold_used`, and `fallback_used`.
+- Replace the current ambiguous score semantics with a stable ranking object that can carry correlation, MI, hybrid, and final scores without changing the top-level contract.
+
+Immediate stabilization to-do:
+- Tighten argument validation for `min_features`, `max_features`, `threshold`, `nbins`, and invalid `target_var` cases.
+- Make fallback behavior explicit in the returned object instead of silently switching to top-correlation selection.
+- Add contract-oriented tests that validate output structure and edge-case behavior, not just successful execution.
+- Update vignette and reference docs so the experimental label remains, but the intended stable interface boundaries are documented clearly.
+
 
 ## Current Scope, Assumptions, and Limitations
 
@@ -191,6 +211,7 @@ fs$selected_features
 ### Planned For April 2026
 
 - Add tests for optional dependency fallback behavior.
+- Stabilize the `select_features_adaptive()` contract before expanding feature-selection scope.
 - Reduce coupling between core imputation and explainability/reporting modules.
 - Improve installation and dependency ergonomics for users who only need the core imputation workflow.
 - Build on the refreshed 2026-04-06 coverage snapshot with additional low-risk tests to move toward the April 78% checkpoint.
