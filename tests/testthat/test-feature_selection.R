@@ -156,3 +156,40 @@ test_that("compute_simple_mi is higher for correlated variables", {
   
   expect_true(mi_correlated > mi_random)
 })
+
+test_that("select_features_adaptive returns stable metadata contract", {
+  set.seed(123)
+  X <- data.frame(
+    a = rnorm(60),
+    b = rnorm(60),
+    c = rnorm(60),
+    d = rnorm(60)
+  )
+
+  res <- select_features_adaptive(
+    X,
+    target_var = "a",
+    method = "hybrid",
+    min_features = 2,
+    max_features = 3
+  )
+
+  expect_true("target_index" %in% names(res))
+  expect_true("target_name" %in% names(res))
+  expect_true("method" %in% names(res))
+  expect_true("n_selected" %in% names(res))
+  expect_true("candidate_count" %in% names(res))
+  expect_true("fallback_used" %in% names(res))
+  expect_true("ranking" %in% names(res))
+
+  expect_equal(res$target_index, 1L)
+  expect_equal(res$target_name, "a")
+  expect_equal(res$method, "hybrid")
+  expect_equal(res$candidate_count, 3L)
+  expect_equal(res$n_selected, length(res$selected_features))
+  expect_equal(length(res$selected_names), length(res$selected_features))
+  expect_true(is.logical(res$fallback_used) && length(res$fallback_used) == 1)
+  expect_s3_class(res$ranking, "data.frame")
+  expect_true(all(c("feature", "final_score", "rank") %in% names(res$ranking)))
+  expect_equal(nrow(res$ranking), res$candidate_count)
+})

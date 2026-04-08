@@ -51,40 +51,105 @@ select_features_adaptive <- function(X,
                                      threshold = NULL,
                                      nbins = 5,
                                      verbose = FALSE) {
-  
   .dimv_fs_warn_once()
-  
+
+  if (!is.data.frame(X) && !is.matrix(X)) {
+    stop("X must be a data.frame or matrix.")
+  }
+
   X <- as.data.frame(lapply(X, as.numeric))
+  if (ncol(X) == 0) {
+    stop("X must have at least one column.")
+  }
+  if (is.null(colnames(X))) {
+    colnames(X) <- paste0("V", seq_len(ncol(X)))
+  }
+
   p <- ncol(X)
-  
+
+  if (!is.numeric(min_features) || length(min_features) != 1 || is.na(min_features)) {
+    stop("min_features must be a single numeric value.")
+  }
+  if (!is.numeric(max_features) || length(max_features) != 1 || is.na(max_features)) {
+    stop("max_features must be a single numeric value.")
+  }
+  min_features <- as.integer(min_features)
+  max_features <- as.integer(max_features)
+
+  if (min_features < 1) {
+    stop("min_features must be >= 1.")
+  }
+  if (max_features < 1) {
+    stop("max_features must be >= 1.")
+  }
+  if (min_features > max_features) {
+    stop("min_features must be <= max_features.")
+  }
+
+  method <- match.arg(method)
+
+  if (method == "fixed") {
+    if (is.null(threshold) || !is.numeric(threshold) || length(threshold) != 1 || is.na(threshold)) {
+      stop("threshold must be a single numeric value for method = 'fixed'.")
+    }
+    if (threshold < 0 || threshold > 1) {
+      stop("threshold must be between 0 and 1 for method = 'fixed'.")
+    }
+  }
+
+  if (method %in% c("mi", "hybrid")) {
+    if (!is.numeric(nbins) || length(nbins) != 1 || is.na(nbins)) {
+      stop("nbins must be a single numeric value for method 'mi' and 'hybrid'.")
+    }
+    nbins <- as.integer(nbins)
+    if (nbins < 2) {
+      stop("nbins must be >= 2 for method 'mi' and 'hybrid'.")
+    }
+  }
+
   # Convert target_var to index if name provided
   if (is.character(target_var)) {
     target_var <- which(colnames(X) == target_var)
   }
-  
+
   if (length(target_var) != 1 || target_var < 1 || target_var > p) {
     stop("target_var must be a valid column index or name.")
   }
-  
-  method <- match.arg(method)
+  target_var <- as.integer(target_var)
+
   candidates <- setdiff(seq_len(p), target_var)
   target_col <- X[, target_var]
-  
+
   if (length(candidates) == 0) {
     return(list(
       selected_features = integer(0),
       selected_names = character(0),
       scores = numeric(0),
       target_var = target_var,
+      target_index = target_var,
+      target_name = colnames(X)[target_var],
+      method = method,
+      n_selected = 0L,
+      candidate_count = 0L,
       threshold_used = NA_real_,
+      fallback_used = FALSE,
+      ranking = data.frame(
+        feature = character(0),
+        correlation_score = numeric(0),
+        mi_score = numeric(0),
+        hybrid_score = numeric(0),
+        final_score = numeric(0),
+        rank = integer(0),
+        stringsAsFactors = FALSE
+      ),
       method_info = list(
-        method = match.arg(method),
+        method = method,
         correlation_scores = numeric(0),
         mi_scores = NULL
       )
     ))
   }
-  
+
   # Pairwise correlations with target
   cors <- vapply(candidates, function(j) {
     complete_both <- !is.na(target_col) & !is.na(X[, j])
@@ -94,11 +159,14 @@ select_features_adaptive <- function(X,
   
   abs_cors <- abs(cors)
   names(abs_cors) <- colnames(X)[candidates]
-  
+
   mi_scores <- NULL
   selected_names <- character(0)
   threshold_used <- NA_real_
-  
+  fallback_used <- FALSE
+  ranking_final <- abs_cors
+  ranking_hybrid <- NULL
+
   if (method == "adaptive") {
     res <- select_adaptive_threshold(abs_cors,
                                      min_features = min_features,
@@ -122,6 +190,7 @@ select_features_adaptive <- function(X,
     selected_names <- res$selected
     mi_scores <- res$mi_scores
     threshold_used <- res$threshold_used
+    ranking_final <- mi_scores
   } else if (method == "hybrid") {
     res <- select_hybrid(X,
                          target_var = target_var,
@@ -131,30 +200,62 @@ select_features_adaptive <- function(X,
     selected_names <- res$selected
     mi_scores <- res$mi_scores
     threshold_used <- res$threshold_used
+    ranking_hybrid <- res$hybrid_scores
+    ranking_final <- ranking_hybrid
   }
-  
+
   if (length(selected_names) == 0) {
-    selected_names <- names(sort(abs_cors, decreasing = TRUE))[seq_len(min_features)]
+    fallback_n <- min(max(min_features, 1L), length(abs_cors))
+    selected_names <- names(sort(abs_cors, decreasing = TRUE))[seq_len(fallback_n)]
+    fallback_used <- TRUE
   }
-  
+
   if (verbose) {
     cat("Feature selection:", method,
         "| selected", length(selected_names), "features\n")
   }
-  
+
   selected_idx <- match(selected_names, colnames(X))
   selected_idx <- selected_idx[!is.na(selected_idx)]
-  
+  selected_names <- colnames(X)[selected_idx]
+  selected_idx <- as.integer(selected_idx)
+
+  candidate_names <- colnames(X)[candidates]
+  correlation_for_ranking <- abs_cors[candidate_names]
+  mi_for_ranking <- if (is.null(mi_scores)) rep(NA_real_, length(candidate_names)) else mi_scores[candidate_names]
+  hybrid_for_ranking <- if (is.null(ranking_hybrid)) rep(NA_real_, length(candidate_names)) else ranking_hybrid[candidate_names]
+  final_for_ranking <- ranking_final[candidate_names]
+
+  ranking <- data.frame(
+    feature = candidate_names,
+    correlation_score = as.numeric(correlation_for_ranking),
+    mi_score = as.numeric(mi_for_ranking),
+    hybrid_score = as.numeric(hybrid_for_ranking),
+    final_score = as.numeric(final_for_ranking),
+    stringsAsFactors = FALSE
+  )
+  ranking <- ranking[order(-ranking$final_score, ranking$feature), , drop = FALSE]
+  ranking$rank <- seq_len(nrow(ranking))
+
   list(
     selected_features = selected_idx,
     selected_names = selected_names,
     scores = abs_cors,
     target_var = target_var,
+    target_index = target_var,
+    target_name = colnames(X)[target_var],
+    method = method,
+    n_selected = length(selected_idx),
+    candidate_count = length(candidates),
     threshold_used = threshold_used,
+    fallback_used = fallback_used,
+    ranking = ranking,
     method_info = list(
       method = method,
       correlation_scores = abs_cors,
-      mi_scores = mi_scores
+      mi_scores = mi_scores,
+      hybrid_scores = ranking_hybrid,
+      final_scores = ranking_final
     )
   )
 }
@@ -167,22 +268,25 @@ select_adaptive_threshold <- function(abs_cors,
   non_zero <- abs_cors[abs_cors > 0]
   median_cor <- if (length(non_zero)) stats::median(non_zero) else 0
   sorted <- sort(abs_cors, decreasing = TRUE)
-  
+
   if (length(sorted) == 0) {
     return(list(selected = character(0), threshold_used = NA_real_))
   }
-  
-  if (sum(abs_cors >= median_cor) < min_features) {
-    threshold_used <- sorted[min_features]
+
+  min_n <- min(max(min_features, 1L), length(sorted))
+  max_n <- min(max(max_features, min_n), length(sorted))
+
+  if (sum(abs_cors >= median_cor) < min_n) {
+    threshold_used <- sorted[min_n]
   } else {
     threshold_used <- median_cor
   }
-  
+
   selected <- names(sorted[sorted >= threshold_used])
-  if (length(selected) > max_features) {
-    selected <- names(sorted[seq_len(max_features)])
+  if (length(selected) > max_n) {
+    selected <- names(sorted[seq_len(max_n)])
   }
-  
+
   list(selected = selected, threshold_used = threshold_used)
 }
 
@@ -193,19 +297,22 @@ select_fixed_threshold <- function(abs_cors,
                                    min_features = 2,
                                    max_features = 5) {
   sorted <- sort(abs_cors, decreasing = TRUE)
-  
+
   if (length(sorted) == 0) {
     return(list(selected = character(0), threshold_used = threshold))
   }
-  
+
+  min_n <- min(max(min_features, 1L), length(sorted))
+  max_n <- min(max(max_features, min_n), length(sorted))
+
   selected <- names(sorted[sorted >= threshold])
-  if (length(selected) < min_features) {
-    selected <- names(sorted[seq_len(min_features)])
+  if (length(selected) < min_n) {
+    selected <- names(sorted[seq_len(min_n)])
   }
-  if (length(selected) > max_features) {
-    selected <- names(sorted[seq_len(max_features)])
+  if (length(selected) > max_n) {
+    selected <- names(sorted[seq_len(max_n)])
   }
-  
+
   list(selected = selected, threshold_used = threshold)
 }
 
@@ -230,17 +337,19 @@ select_mutual_information <- function(X,
   mi_scores <- mi
   names(mi_scores) <- colnames(X)[candidates]
   sorted <- sort(mi_scores, decreasing = TRUE)
-  
+
   if (length(sorted) == 0) {
     return(list(selected = character(0), threshold_used = NA_real_, mi_scores = mi_scores))
   }
-  
-  threshold_used <- sorted[min_features]
+
+  min_n <- min(max(min_features, 1L), length(sorted))
+  max_n <- min(max(max_features, min_n), length(sorted))
+  threshold_used <- sorted[min_n]
   selected <- names(sorted[sorted >= threshold_used])
-  if (length(selected) > max_features) {
-    selected <- names(sorted[seq_len(max_features)])
+  if (length(selected) > max_n) {
+    selected <- names(sorted[seq_len(max_n)])
   }
-  
+
   list(selected = selected, threshold_used = threshold_used, mi_scores = mi_scores)
 }
 
@@ -283,18 +392,30 @@ select_hybrid <- function(X,
   score <- 0.5 * norm(abs_cors) + 0.5 * norm(mi_scores)
   names(score) <- colnames(X)[candidates]
   sorted <- sort(score, decreasing = TRUE)
-  
+
   if (length(sorted) == 0) {
-    return(list(selected = character(0), threshold_used = NA_real_, mi_scores = mi_scores))
+    return(list(
+      selected = character(0),
+      threshold_used = NA_real_,
+      mi_scores = mi_scores,
+      hybrid_scores = score
+    ))
   }
-  
-  threshold_used <- sorted[min_features]
+
+  min_n <- min(max(min_features, 1L), length(sorted))
+  max_n <- min(max(max_features, min_n), length(sorted))
+  threshold_used <- sorted[min_n]
   selected <- names(sorted[sorted >= threshold_used])
-  if (length(selected) > max_features) {
-    selected <- names(sorted[seq_len(max_features)])
+  if (length(selected) > max_n) {
+    selected <- names(sorted[seq_len(max_n)])
   }
-  
-  list(selected = selected, threshold_used = threshold_used, mi_scores = mi_scores)
+
+  list(
+    selected = selected,
+    threshold_used = threshold_used,
+    mi_scores = mi_scores,
+    hybrid_scores = score
+  )
 }
 
 
