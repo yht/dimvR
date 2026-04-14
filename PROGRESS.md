@@ -13,7 +13,11 @@ This document replaces `PROGRESS_PHASE1.md` and summarizes the implementation st
   - Test cases: 34
   - Coverage percent: 76.87
   - Coverage gate: pass at the interim 40% threshold
-  - Local `testthat::test_local('.')`: last documented passing baseline remains valid
+- Latest local verification (2026-04-14):
+  - `testthat::test_local('.')`: PASS 114, WARN 1, SKIP 8, FAIL 0
+  - Remaining warning is the expected experimental warning from feature selection tests
+  - Remaining skips are due to absent optional packages such as `xgboost` and `viridis`
+  - Working tree cleaned after removing stale local-only test file variants
 
 ## Roadmap Execution Notes
 
@@ -134,8 +138,8 @@ Feature selection stabilization to-do:
 
 ## Current Priorities (Week of 2026-04-06)
 
-1. Build on the new optional dependency fallback tests with additional low-cost edge-case coverage.
-2. Keep `dimvExplainR/eval/` as the active reporting baseline and refresh it after meaningful test changes.
-3. Freeze the intended `select_features_adaptive()` API contract before deeper feature-selection work proceeds.
-4. Raise coverage from 76.87% to at least 78% during April by prioritizing low-risk tests around fallback paths and decoupled core helpers.
-5. Identify and document the next small implementation gaps that can be closed without major architectural changes.
+1. Freeze the intended `select_features_adaptive()` API contract before deeper feature-selection work proceeds.
+2. Build on the existing fallback and edge-case tests with additional low-cost coverage.
+3. Raise coverage from 76.87% to at least 78% during April by prioritizing low-risk tests around fallback paths and decoupled core helpers.
+4. Keep `dimvExplainR/eval/` as the active reporting baseline and refresh it after meaningful test changes.
+5. Defer larger architectural work while the mobile-laptop setup is being used mainly for lightweight maintenance.

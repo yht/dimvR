@@ -62,6 +62,9 @@ with additional experimental components for benchmarking, explainability, and re
 Execution snapshot:
 - Verified active snapshot (2026-04-06): 11 test files, 34 test cases, 76.87% estimated coverage
 - Coverage gate status at that verified snapshot: pass against interim threshold (40%)
+- Latest local test run (2026-04-14): `testthat::test_local('.')` completed with PASS 114, WARN 1, SKIP 8, FAIL 0
+- The remaining warning is the expected experimental warning emitted by feature selection tests
+- The remaining skips reflect optional packages not installed locally, primarily `xgboost` and `viridis`
 - Tracked implementation completion: 70.4% (based on `PROGRESS.md`)
 
 Current implementation notes:
@@ -210,7 +213,6 @@ fs$selected_features
 
 ### Planned For April 2026
 
-- Add tests for optional dependency fallback behavior.
 - Stabilize the `select_features_adaptive()` contract before expanding feature-selection scope.
 - Reduce coupling between core imputation and explainability/reporting modules.
 - Improve installation and dependency ergonomics for users who only need the core imputation workflow.
