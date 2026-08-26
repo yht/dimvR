@@ -1,11 +1,12 @@
 # dimvR
 >
+>
 > Regularized Conditional Distribution-based Imputation for Missing Data in R
 [![R-CMD-check](https://github.com/yht/dimvR/actions/workflows/r-check.yml/badge.svg)](https://github.com/yht/dimvR/actions/workflows/r-check.yml)
 [![Smoke Benchmark](https://github.com/yht/dimvR/actions/workflows/smoke-benchmark.yml/badge.svg)](https://github.com/yht/dimvR/actions/workflows/smoke-benchmark.yml)
 This package implements a regularized conditional distribution-based approach to missing data imputation,
 commonly referred to as **DIMV (Distribution-based Imputation using Conditional Expectation with Regularization)**
-[(Nguyen et al., 2023)](https://arxiv.org/abs/2302.00911). The method imputes missing entries by estimating the
+[(Nguyin et al., 2023)](https://arxiv.org/abs/2302.00911). The method imputes missing entries by estimating the
 conditional expectation of each variable given the others while applying regularization to improve numerical
 stability and robustness in high-dimensional or multicollinear settings.
 The package is motivated by methodological advances discussed in
@@ -55,30 +56,65 @@ Current implementation notes:
 - The internal MICE backend exists in `R/mice_backend.R` but is still marked experimental and is not exported.
 - Core imputation uses a smaller required dependency set; benchmarking, SHAP, and report-generation helpers rely on additional suggested packages.
 
+## Feature Selection Direction
+
+Current audit conclusion:
+- `select_features_adaptive()` is already the de facto public entry point for feature selection because it is exported, tested, documented, and used by `dimv_train()`.
+- The current output shape is useful but not yet a stable API contract; field meanings remain partly ambiguous across `adaptive`, `fixed`, `mi`, and `hybrid` modes.
+- Internal helper functions such as `select_adaptive_threshold()`, `select_fixed_threshold()`, `select_mutual_information()`, `select_hybrid()`, and `compute_simple_mi()` should remain implementation details rather than becoming user-facing stability commitments.
+
+Proposed stable contract for `select_features_adaptive()`:
+- Keep `selected_features` as the primary downstream field and guarantee that it is always an integer vector of valid column indexes.
+- Keep `selected_names` aligned 1:1 with `selected_features`.
+- Normalize target metadata into stable fields such as `target_index` and `target_name`.
+- Add explicit metadata for `method`, `n_selected`, `candidate_count`, `threshold_used`, and `fallback_used`.
+- Replace the current ambiguous score semantics with a stable ranking object that can carry correlation, MI, hybrid, and final scores without changing the top-level contract.
+
+Immediate stabilization to-do:
+- Tighten argument validation for `min_features`, `max_features`, `threshold`, `nbins`, and invalid `target_var` cases.
+- Make fallback behavior explicit in the returned object instead of silently switching to top-correlation selection.
+- Add contract-oriented tests that validate output structure and edge-case behavior, not just successful execution.
+- Update vignette and reference docs so the experimental label remains, but the intended stable interface boundaries are documented clearly.
+
 ## Current Scope, Assumptions, and Limitations
 
 **Assumptions**:
-- **Approximate Multivariate Normality:**  DIMV implicitly relies on the assumption that the joint distribution of variables is approximately multivariate
+- **Approximate Multivariate Normality:**  
+  DIMV implicitly relies on the assumption that the joint distribution of variables is approximately multivariate
   normal, enabling the use of conditional expectation as the optimal estimator.
-- **Missing at Random (MAR) Conditions Preferred:**  The method performs best when data are Missing Completely at Random (MCAR) or Missing at Random (MAR).  Under Missing Not at Random (MNAR), bias may persist unless additional modeling is applied.
-- **Linear Conditional Relationships:**  Ridge-based conditional models assume linear relationships among variables. Although robust under moderate
+
+- **Missing at Random (MAR) Conditions Preferred:**  
+  The method performs best when data are Missing Completely at Random (MCAR) or Missing at Random (MAR).  
+  Under Missing Not at Random (MNAR), bias may persist unless additional modeling is applied.
+
+- **Linear Conditional Relationships:**  
+  Ridge-based conditional models assume linear relationships among variables. Although robust under moderate
   deviations, highly nonlinear dependencies may reduce accuracy.
 
 **Limitations**:
-- **Not Tailored for Strong Nonlinear Interactions:**  In datasets where nonlinearities dominate, tree-based or neural-network-based imputation may outperform DIMV.
-- **Performance Degradation in High Missingness (>60%):**  When a large proportion of entries are missing, conditional estimates become less reliable, especially for
+- **Not Tailored for Strong Nonlinear Interactions:**  
+  In datasets where nonlinearities dominate, tree-based or neural-network-based imputation may outperform DIMV.
+
+- **Performance Degradation in High Missingness (>60%):**  
+  When a large proportion of entries are missing, conditional estimates become less reliable, especially for 
   variables with low correlation to others.
-- **Multiple Imputation is Approximate:**  Noise injection relies on Gaussian residual estimates, which may inadequately capture uncertainty if residuals
+
+- **Multiple Imputation is Approximate:**  
+  Noise injection relies on Gaussian residual estimates, which may inadequately capture uncertainty if residuals 
   deviate significantly from normality.
-- **Experimental Pipeline Components:**  Feature selection, SHAP benchmarking, report generation, and the internal MICE backend are still under active
+
+- **Experimental Pipeline Components:**  
+  Feature selection, SHAP benchmarking, report generation, and the internal MICE backend are still under active
   refinement and should be treated as experimental interfaces.
-- **Current Experiment Scope is Regression-Focused:**  The bundled end-to-end experiment runner currently targets regression with `xgboost`, so classification and
+
+- **Current Experiment Scope is Regression-Focused:**  
+  The bundled end-to-end experiment runner currently targets regression with `xgboost`, so classification and
   alternative model backends are not yet first-class workflow options.
 
 ## References
 
 Vu, M. A., Nguyen, T., Do, T. T., Phan, N., Chawla, N. V., Halvorsen, P., Riegler, M. A. & Nguyen, B. T. (2023).
-**Conditional expectation with regularization for missing data imputation**. *arXiv:2302.00911v3 [stat.ML]*. 
+**Conditional expectation with regularization for missing data imputation**. *arXiv:2302.00911v3 [stat.ML]*.  
 https://arxiv.org/abs/2302.00911
 
 Nguyen, M.-H., Dao, M.-H., Tran, M.-T., & Phung, D. (2024). 
@@ -138,6 +174,7 @@ fs$selected_features
 - Vignette: `vignettes/feature_selection.Rmd`
 - Examples: `examples/day1_feature_selection_demo.R`, `examples/benchmark_feature_selection.R`
 
+
 ## Roadmap Overview
 
 ### Completed Through 2026-04-01
@@ -156,11 +193,10 @@ fs$selected_features
 - Add tests for optional dependency fallbacks
 
 ### Q3 2026 (Current Quarter)
-- [ ] Re-run `covr::package_coverage()` to confirm actual coverage percent (currently 76.73% April 2026 baseline)
-- [ ] Raise automated test coverage from 76.73% toward 80% target (Q3 checkpoint)
-- [ ] Generalize `run_full_pipeline()` beyond regression (still xgboost-bound)
+- [ ] Re-run `covr::package_coverage()` to confirm actual coverage percent (currently ~80.23% estimated baseline)
+- [ ] Generalize `run_full_pipeline()` beyond regression (now model-agnostic via `evaluate_downstream()`)
 - [ ] Stabilize experimental APIs that are candidates for long-term public support
-  - Feature selection: decide export vs. keep experimental
+  - Feature selection: finalize stable contract for `select_features_adaptive()`
   - MICE backend: stabilize API if moving to public
   - SHAP/benchmarking: finalize experimental interfaces
 - [ ] Evaluate alternative model backends beyond `xgboost` (LightGBM, CatBoost considerations)
