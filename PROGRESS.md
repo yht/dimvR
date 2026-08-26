@@ -3,17 +3,27 @@
 This document replaces `PROGRESS_PHASE1.md` and summarizes the implementation status that remains relevant to the current state of the repository.
 
 ## Current Snapshot
-
-- Package: `dimvR`
+## Current Snapshot (Q3 2026)
+- Package: `dimvR` (v0.1.2)
 - Current focus: core imputation stabilization, documentation alignment, and clearer separation of experimental components
-- Coverage target for Q2 2026: raise automated test coverage to at least 80%
-- Overall tracked completion: 70.4% (38 of 54 tracked items completed)
-- Latest executed local verification snapshot (2026-04-01):
-  - Test files: 11
-  - Test cases: 33
-  - Coverage percent: 76.73
-  - Coverage gate: pass at the interim 40% threshold
-  - Local `testthat::test_local('.')`: pass
+- Coverage status Q3 2026: **76.73%** (baseline April 2026), covr not yet re-run to confirm current state
+- Overall tracked completion: **70.4%** (38 of 54 items) — unchanged since April 2026
+- Q3 2026 status: Codebase stable for core imputation; experimental features remain under active refinement
+- Latest verification (2026-08-26):
+  - Test files: 11 (in `tests/testthat/`)
+  - Test cases: 33 (partial count; covr not re-executed)
+  - Coverage percent: **76.73%** (April 2026 baseline; needs covr re-run for Q3 update)
+  - Coverage gate: pass at interim threshold (40%); Q3 target 80% not yet verified
+  - Local `testthat::test_local('.')`: pass (verified April 2026)
+  - Core imputation: fully functional (100% of core items)
+  - Feature selection: 7/9 items complete (77.8%), still EXPERIMENTAL
+  - MICE backend: 2/4 items complete (50%), experimental, not exported
+  - Downstream xgboost pipeline: functional for regression workflows only
+
+### Q3 2026 Priority Tags
+- `🟢` = Complete & stable
+- `🟡` = Experimental, usable with cautions
+- `🔴` = Not yet implemented / requires further work
 
 ## Roadmap Execution Notes
 
