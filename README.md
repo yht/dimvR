@@ -41,14 +41,14 @@ with additional experimental components for benchmarking, explainability, and re
 | Automated smoke benchmark in CI | Implemented | `.github/workflows/smoke-benchmark.yml`, `eval/smoke_benchmark.R` |
 | Progress metrics (test count + coverage) | Implemented | `eval/ci_progress_metrics.csv`, `eval/ci_progress_summary.md` |
 | Interim coverage gate | Implemented | `MIN_COVERAGE=40` via `eval/check_coverage_gate.R` in CI workflow |
-| Q3 2026 coverage status | Updated | This README reflects August 2026 snapshot |
+| Q3 2026 coverage status | Updated | This README reflects September 2026 snapshot |
 | Runtime-check coverage tests | Implemented | Optional dependency fallback paths in `R/experiment.R` |
 
-Execution snapshot (2026-04-01):
-- Passing local `testthat::test_local('.')` run
-- CI progress artifact regenerated: 11 test files, 33 test cases, 76.73% estimated coverage
+Execution snapshot (2026-09-10):
+- `covr::package_coverage(type = "tests")` completed successfully
+- Coverage: 50.43% across 12 test files and 45 test cases
 - Coverage gate status: pass against interim threshold (40%)
-- Tracked implementation completion: 70.4% (based on `PROGRESS.md`)
+- Seven `xgboost`-dependent tests skipped because the optional package is not installed
 
 Current implementation notes:
 - `run_full_pipeline()` is currently a regression-oriented workflow using `xgboost`.
@@ -193,8 +193,9 @@ fs$selected_features
 - Add tests for optional dependency fallbacks
 
 ### Q3 2026 (Current Quarter)
-- [ ] Re-run `covr::package_coverage()` to confirm actual coverage percent (currently ~80.23% estimated baseline)
-- [ ] Generalize `run_full_pipeline()` beyond regression (now model-agnostic via `evaluate_downstream()`)
+- [x] Re-run `covr::package_coverage()` and regenerate progress artifacts (50.43% actual coverage)
+- [ ] Raise automated coverage toward the 80% Q3 target, prioritizing core and experimental fallback paths
+- [ ] Generalize `run_full_pipeline()` beyond its current `xgboost` regression implementation by integrating `evaluate_downstream()`
 - [ ] Stabilize experimental APIs that are candidates for long-term public support
   - Feature selection: finalize stable contract for `select_features_adaptive()`
   - MICE backend: stabilize API if moving to public

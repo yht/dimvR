@@ -136,7 +136,7 @@ test_that("dimv_diagnostics edge case: single variable", {
   expect_named(diag, c("iterations", "adaptive", "feature_select",
                        "residual_variances", "diff_history", "missing_rmse"))
   expect_length(diag$residual_variances, 1)
-  expect_type(diff_history, "double")
+  expect_type(diag$diff_history, "double")
 })
 
 test_that("dimv_diagnostics error handling", {
