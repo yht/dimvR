@@ -24,6 +24,7 @@
 #'   \item{formula}{The formula used for modeling}
 #' 
 #' @export
+#' @importFrom stats as.formula glm lm model.matrix
 #' @examples
 #' library(dimvR)
 #' set.seed(123)
