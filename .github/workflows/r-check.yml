@@ -32,7 +32,7 @@ jobs:
 
       - name: Install CI dependencies
         shell: Rscript {0}
-        run: install.packages(c("rcmdcheck", "testthat"), repos = "https://cloud.r-project.org")
+        run: install.packages(c("rcmdcheck", "testthat", "knitr", "rmarkdown"), repos = "https://cloud.r-project.org")
 
       - uses: r-lib/actions/check-r-package@v2
         with:
