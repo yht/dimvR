@@ -33,7 +33,7 @@ jobs:
             any::rcmdcheck
             any::covr
             any::testthat
-          needs: test
+          needs: install
 
       - name: Install package
         shell: Rscript {0}
