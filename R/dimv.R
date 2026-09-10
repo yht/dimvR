@@ -72,7 +72,8 @@ dimv_train <- function(X, lambda = 1.0, maxit = 50, tol = 1e-4,
   
   ridge_fit <- function(Xmat, y, lambda) {
     Z <- cbind(1, Xmat)
-    D <- diag(c(0, rep(1, ncol(Xmat))))
+    D <- diag(ncol(Z))
+    D[1, 1] <- 0
     A <- crossprod(Z) + lambda * D
     b <- crossprod(Z, y)
     coef <- tryCatch(solve(A, b), error = function(e) MASS::ginv(A) %*% b)
@@ -156,7 +157,7 @@ dimv_train <- function(X, lambda = 1.0, maxit = 50, tol = 1e-4,
                  lambda = lambda,
                  adaptive = adaptive,
                  feature_select = feature_select,
-                 iters = it,
+                 iters = as.numeric(it),
                  diff_history = diff_history,
                  colnames = coln,
                  version = "0.1.2"),
@@ -234,6 +235,9 @@ dimv_impute_new <- function(imputer, X_new, maxit = 50, tol = 1e-4, verbose = FA
 #' @importFrom stats rnorm
 dimv_impute_multiple <- function(imputer, X_new, m = 5, seed = NULL) {
   if (!inherits(imputer, "dimv_imputer")) stop("imputer must be result of dimv_train()")
+  if (length(m) != 1L || !is.finite(m) || m < 1 || m != as.integer(m)) {
+    stop("m must be a positive integer")
+  }
   if (!is.null(seed)) set.seed(seed)
   
   X_new <- as.data.frame(lapply(X_new, as.numeric))
@@ -271,8 +275,17 @@ dimv_impute_multiple <- function(imputer, X_new, m = 5, seed = NULL) {
 #'
 #' @export
 dimv_diagnostics <- function(imputer, X_original, X_imputed) {
+  if (!inherits(imputer, "dimv_imputer")) stop("imputer must be result of dimv_train()")
+  if (ncol(X_original) != length(imputer$colnames) ||
+      ncol(X_imputed) != length(imputer$colnames)) {
+    stop("imputer and data must have the same number of columns")
+  }
   nas <- is.na(as.matrix(X_original))
-  rmse <- sqrt(mean((as.matrix(X_imputed)[nas] - imputer$col_means[col(X_imputed)[nas]])^2))
+  rmse <- if (any(nas)) {
+    sqrt(mean((as.matrix(X_imputed)[nas] - imputer$col_means[col(X_imputed)[nas]])^2))
+  } else {
+    0
+  }
   list(
     iterations = imputer$iters,
     adaptive = imputer$adaptive,

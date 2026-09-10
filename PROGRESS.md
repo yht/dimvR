@@ -2,19 +2,17 @@
 
 This document replaces `PROGRESS_PHASE1.md` and summarizes the implementation status that remains relevant to the current state of the repository.
 
-## Current Snapshot
 ## Current Snapshot (Q3 2026)
 - Package: `dimvR` (v0.1.2)
 - Current focus: core imputation stabilization, documentation alignment, and clearer separation of experimental components
-- Coverage status Q3 2026: **76.73%** (baseline April 2026), covr not yet re-run to confirm current state
-- Overall tracked completion: **70.4%** (38 of 54 items) — unchanged since April 2026
-- Q3 2026 status: Codebase stable for core imputation; experimental features remain under active refinement
-- Latest verification (2026-08-26):
-  - Test files: 11 (in `tests/testthat/`)
-  - Test cases: 33 (partial count; covr not re-executed)
-  - Coverage percent: **76.73%** (April 2026 baseline; needs covr re-run for Q3 update)
+- Coverage status Q3 2026: **50.43%** (measured 2026-09-10 with `covr`)
+- Q3 2026 status: Core imputation is functional; experimental features remain under active refinement
+- Latest verification (2026-09-10):
+  - Test files: 12 (in `tests/testthat/`)
+  - Test cases: 45
+  - Coverage percent: **50.43%**
   - Coverage gate: pass at interim threshold (40%); Q3 target 80% not yet verified
-  - Local `testthat::test_local('.')`: pass (verified April 2026)
+  - Coverage run completed with 7 optional `xgboost` tests skipped
   - Core imputation: fully functional (100% of core items)
   - Feature selection: 7/9 items complete (77.8%), still EXPERIMENTAL
   - MICE backend: 2/4 items complete (50%), experimental, not exported
@@ -43,19 +41,15 @@ This document replaces `PROGRESS_PHASE1.md` and summarizes the implementation st
 - [x] Update `run_full_pipeline()` for the active `xgboost` interface and rerun tests
 - [x] Add tests for optional dependency fallbacks
 
-### Planned For April 2026
+### Remaining For Q3 2026
 
-- [ ] Reduce coupling between core imputation and explainability/reporting modules
-- [ ] Improve installation ergonomics for users who only need the core imputation workflow
-- [ ] Reach at least 78% automated test coverage as the April checkpoint toward the Q2 80% target
-
-### Planned For Q2 2026
-
-- [ ] Raise automated test coverage from 76.19% to at least 80%
-- [ ] Generalize `run_full_pipeline()` beyond regression
-- [ ] Stabilize experimental APIs that are candidates for long-term public support
-- [ ] Evaluate alternative model backends beyond `xgboost`
-- [ ] Improve production and CRAN readiness
+- [ ] Raise automated test coverage from 50.43% toward the 80% target
+- [ ] Finalize the stable contract for `select_features_adaptive()` and expand edge-case tests
+- [ ] Integrate `evaluate_downstream()` into `run_full_pipeline()` and add non-regression task support
+- [ ] Evaluate alternative downstream model backends beyond `xgboost`
+- [ ] Decide whether the MICE backend should become a stable exported API
+- [ ] Finalize SHAP and report-generation experimental interfaces
+- [ ] Complete CRAN-readiness checks, dependency review, documentation polish, and release notes
 
 ## Function and Component Status
 
@@ -117,8 +111,8 @@ This document replaces `PROGRESS_PHASE1.md` and summarizes the implementation st
 - [x] CI checks for Ubuntu and Windows
 - [x] Smoke benchmark workflow
 - [x] Interim coverage gate
-- [x] Regenerated local progress and coverage artifacts against the current repository state
-- [x] Treat `dimvExplainR/eval/` as the active coverage/progress baseline and root `eval/` as archival/stale unless explicitly regenerated
+- [x] Regenerated local progress and coverage artifacts against the current repository state (50.43% coverage)
+- [x] Treat the root `eval/` artifacts as the active coverage/progress baseline
 - [x] Consolidate a single source of truth for coverage metrics
 - [ ] Review dependency metadata after the current refactor
 
@@ -128,10 +122,10 @@ This document replaces `PROGRESS_PHASE1.md` and summarizes the implementation st
 - Feature selection, report generation, SHAP benchmarking, and the internal MICE backend are treated as experimental components.
 - Short-term work is prioritized toward documentation alignment, metadata cleanup, and test quality rather than major architectural refactoring.
 
-## Priorities for 2026-04-01
+## Priorities for 2026-09-10
 
-1. Complete the dependency cleanup review, including any remaining stale `Suggests` entries and runtime checks.
-2. Build on the new optional dependency fallback tests with additional low-cost edge-case coverage.
-3. Keep `dimvExplainR/eval/` as the active reporting baseline and refresh it after meaningful test changes.
-4. Raise coverage to at least 78% during April by prioritizing low-risk tests around fallback paths and decoupled core helpers.
-5. Identify and document the next small implementation gaps that can be closed without major architectural changes.
+1. Raise coverage by adding tests around core diagnostics, feature selection, and optional dependency fallbacks.
+2. Finalize and document the `select_features_adaptive()` output contract.
+3. Connect the model-agnostic `evaluate_downstream()` helper to the end-to-end experiment workflow.
+4. Review optional dependency metadata and make the experimental API boundaries explicit.
+5. Complete CRAN-readiness checks and add formal release notes.
