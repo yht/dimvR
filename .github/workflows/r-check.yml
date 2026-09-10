@@ -20,6 +20,7 @@ jobs:
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
       R_KEEP_PKG_SOURCE: yes
+      _R_CHECK_FORCE_SUGGESTS_: false
 
     steps:
       - uses: actions/checkout@v4
@@ -35,7 +36,8 @@ jobs:
             any::remotes
             any::mice
             any::rcmdcheck
-          needs: check
+            any::testthat
+          needs: install
 
       - uses: r-lib/actions/check-r-package@v2
         with:
