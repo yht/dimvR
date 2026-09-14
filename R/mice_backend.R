@@ -69,6 +69,12 @@ mice_backend_apply <- function(mice_fit_list, X_test, k = 1) {
   if (!requireNamespace("mice", quietly = TRUE)) {
     stop("Package 'mice' is required for mice_backend_apply()")
   }
+  if (!is.list(mice_fit_list) || is.null(mice_fit_list$model) ||
+      length(k) != 1 || !is.numeric(k) || k < 1 ||
+      k > mice_fit_list$model$m) {
+    stop("k must be an imputation index between 1 and ", mice_fit_list$model$m)
+  }
+  k <- as.integer(k)
   
   X_test_imp <- as.data.frame(X_test)
   train_k <- mice::complete(mice_fit_list$model, k)

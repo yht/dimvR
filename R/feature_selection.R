@@ -220,6 +220,11 @@ select_mutual_information <- function(X,
   p <- ncol(X)
   candidates <- setdiff(seq_len(p), target_var)
   target_col <- X[, target_var]
+
+  if (length(candidates) == 0) {
+    return(list(selected = character(0), threshold_used = NA_real_,
+                mi_scores = numeric(0)))
+  }
   
   mi <- sapply(candidates, function(j) {
     complete_both <- !is.na(target_col) & !is.na(X[, j])
@@ -255,6 +260,11 @@ select_hybrid <- function(X,
   p <- ncol(X)
   candidates <- setdiff(seq_len(p), target_var)
   target_col <- X[, target_var]
+
+  if (length(candidates) == 0) {
+    return(list(selected = character(0), threshold_used = NA_real_,
+                mi_scores = numeric(0)))
+  }
   
   cors <- sapply(candidates, function(j) {
     complete_both <- !is.na(target_col) & !is.na(X[, j])
@@ -333,4 +343,3 @@ compute_simple_mi <- function(x, y, nbins = 5) {
   
   return(max(0, mi))  # MI should be non-negative
 }
-

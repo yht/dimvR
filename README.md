@@ -29,8 +29,9 @@ with additional experimental components for benchmarking, explainability, and re
   HTML report generation. This component remains experimental.
 - **R-Native Core Imputation:**  Core DIMV training and imputation are implemented in R with a smaller required dependency set than the
   experimental benchmarking and reporting workflows.
-- **Downstream Model Compatibility:**  Imputed outputs can be used in downstream statistical or machine learning workflows. The bundled experimental
-  pipeline currently targets regression using `xgboost`.
+- **Downstream Model Compatibility:**  Imputed outputs can be used in downstream statistical or machine learning workflows. The exported
+  `evaluate_downstream()` helper supports base-R `lm`/`glm`, optional `ranger`, `randomForest`, `glmnet`, `xgboost`, and custom pre-trained models.
+  The bundled end-to-end experiment runner still targets regression using `xgboost`.
 
 ## Engineering Progress (P0)
 
@@ -44,15 +45,16 @@ with additional experimental components for benchmarking, explainability, and re
 | Q3 2026 coverage status | Updated | This README reflects September 2026 snapshot |
 | Runtime-check coverage tests | Implemented | Optional dependency fallback paths in `R/experiment.R` |
 
-Execution snapshot (2026-09-10):
+Execution snapshot (2026-09-14):
 - `covr::package_coverage(type = "tests")` completed successfully
-- Coverage: 50.43% across 12 test files and 45 test cases
+- Coverage: 72.83% across 14 test files and 57 test cases
 - Coverage gate status: pass against interim threshold (40%)
-- Seven `xgboost`-dependent tests skipped because the optional package is not installed
+- Eight optional/conditional tests skipped: the XGBoost/SHAP paths are unavailable in this environment, and the missing-backend test is not applicable when `ranger` is installed
 
 Current implementation notes:
 - `run_full_pipeline()` is currently a regression-oriented workflow using `xgboost`.
 - Feature selection helpers are exported but explicitly marked experimental in `R/feature_selection.R`.
+- `evaluate_downstream()` is exported and supports `ranger`, `randomForest`, and `glmnet` in addition to `lm`, `glm`, `xgboost`, and custom models.
 - The internal MICE backend exists in `R/mice_backend.R` but is still marked experimental and is not exported.
 - Core imputation uses a smaller required dependency set; benchmarking, SHAP, and report-generation helpers rely on additional suggested packages.
 
@@ -108,8 +110,9 @@ Immediate stabilization to-do:
   refinement and should be treated as experimental interfaces.
 
 - **Current Experiment Scope is Regression-Focused:**  
-  The bundled end-to-end experiment runner currently targets regression with `xgboost`, so classification and
-  alternative model backends are not yet first-class workflow options.
+  The bundled end-to-end experiment runner currently targets regression with `xgboost`. Alternative backends are
+  available through `evaluate_downstream()`, but are not yet first-class `run_full_pipeline()` options, and
+  classification is not supported by the end-to-end runner.
 
 ## References
 
@@ -193,14 +196,15 @@ fs$selected_features
 - Add tests for optional dependency fallbacks
 
 ### Q3 2026 (Current Quarter)
-- [x] Re-run `covr::package_coverage()` and regenerate progress artifacts (50.43% actual coverage)
-- [ ] Raise automated coverage toward the 80% Q3 target, prioritizing core and experimental fallback paths
+- [x] Re-run `covr::package_coverage()` and regenerate progress artifacts (72.83% actual coverage)
+- [ ] Raise automated coverage from 72.83% toward the 80% Q3 target, prioritizing currently skipped XGBoost/SHAP paths
 - [ ] Generalize `run_full_pipeline()` beyond its current `xgboost` regression implementation by integrating `evaluate_downstream()`
 - [ ] Stabilize experimental APIs that are candidates for long-term public support
   - Feature selection: finalize stable contract for `select_features_adaptive()`
   - MICE backend: stabilize API if moving to public
   - SHAP/benchmarking: finalize experimental interfaces
-- [ ] Evaluate alternative model backends beyond `xgboost` (LightGBM, CatBoost considerations)
+- [x] Evaluate alternative downstream model backends beyond `xgboost` (`ranger`, `randomForest`, and `glmnet`)
+- [ ] Assess LightGBM/CatBoost and decide whether they belong in the supported optional-backend set
 - [ ] Improve production and CRAN readiness with tighter checks, documentation polish, and stronger quality gates
 
 For more detailed execution tracking, see `PROGRESS.md`.
