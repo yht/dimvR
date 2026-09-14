@@ -5,18 +5,19 @@ This document replaces `PROGRESS_PHASE1.md` and summarizes the implementation st
 ## Current Snapshot (Q3 2026)
 - Package: `dimvR` (v0.1.2)
 - Current focus: core imputation stabilization, documentation alignment, and clearer separation of experimental components
-- Coverage status Q3 2026: **50.43%** (measured 2026-09-10 with `covr`)
+- Coverage status Q3 2026: **72.83%** (measured 2026-09-14 with `covr`)
 - Q3 2026 status: Core imputation is functional; experimental features remain under active refinement
-- Latest verification (2026-09-10):
-  - Test files: 12 (in `tests/testthat/`)
-  - Test cases: 45
-  - Coverage percent: **50.43%**
+- Latest verification (2026-09-14):
+  - Test files: 14 (in `tests/testthat/`)
+  - Test cases: 57
+  - Coverage percent: **72.83%**
   - Coverage gate: pass at interim threshold (40%); Q3 target 80% not yet verified
-  - Coverage run completed with 7 optional `xgboost` tests skipped
+  - Coverage run completed with 8 optional-dependency tests skipped
   - Core imputation: fully functional (100% of core items)
   - Feature selection: 7/9 items complete (77.8%), still EXPERIMENTAL
   - MICE backend: 2/4 items complete (50%), experimental, not exported
-  - Downstream xgboost pipeline: functional for regression workflows only
+  - Downstream evaluator: supports `lm`, `glm`, `ranger`, `randomForest`, `glmnet`, `xgboost`, and custom models
+  - End-to-end xgboost pipeline: functional for regression workflows only
 
 ### Q3 2026 Priority Tags
 - `🟢` = Complete & stable
@@ -43,10 +44,11 @@ This document replaces `PROGRESS_PHASE1.md` and summarizes the implementation st
 
 ### Remaining For Q3 2026
 
-- [ ] Raise automated test coverage from 50.43% toward the 80% target
+- [ ] Raise automated test coverage from 72.83% toward the 80% target, prioritizing skipped XGBoost/SHAP paths
 - [ ] Finalize the stable contract for `select_features_adaptive()` and expand edge-case tests
 - [ ] Integrate `evaluate_downstream()` into `run_full_pipeline()` and add non-regression task support
-- [ ] Evaluate alternative downstream model backends beyond `xgboost`
+- [x] Evaluate alternative downstream model backends beyond `xgboost` (`ranger`, `randomForest`, and `glmnet`)
+- [ ] Assess LightGBM/CatBoost and decide whether they belong in the supported optional-backend set
 - [ ] Decide whether the MICE backend should become a stable exported API
 - [ ] Finalize SHAP and report-generation experimental interfaces
 - [ ] Complete CRAN-readiness checks, dependency review, documentation polish, and release notes
@@ -84,7 +86,7 @@ This document replaces `PROGRESS_PHASE1.md` and summarizes the implementation st
 - [x] `generate_report()`
 - [x] CI smoke benchmark workflow
 - [x] Strengthen optional dependency fallback behavior
-- [ ] Add support for non-`xgboost` backends
+- [x] Add non-`xgboost` backends to `evaluate_downstream()`
 - [ ] Add support for non-regression tasks
 
 ### Additional Backends
@@ -111,7 +113,7 @@ This document replaces `PROGRESS_PHASE1.md` and summarizes the implementation st
 - [x] CI checks for Ubuntu and Windows
 - [x] Smoke benchmark workflow
 - [x] Interim coverage gate
-- [x] Regenerated local progress and coverage artifacts against the current repository state (50.43% coverage)
+- [x] Regenerated local progress and coverage artifacts against the current repository state (72.83% coverage)
 - [x] Treat the root `eval/` artifacts as the active coverage/progress baseline
 - [x] Consolidate a single source of truth for coverage metrics
 - [ ] Review dependency metadata after the current refactor
@@ -122,9 +124,9 @@ This document replaces `PROGRESS_PHASE1.md` and summarizes the implementation st
 - Feature selection, report generation, SHAP benchmarking, and the internal MICE backend are treated as experimental components.
 - Short-term work is prioritized toward documentation alignment, metadata cleanup, and test quality rather than major architectural refactoring.
 
-## Priorities for 2026-09-10
+## Priorities for 2026-09-14
 
-1. Raise coverage by adding tests around core diagnostics, feature selection, and optional dependency fallbacks.
+1. Raise coverage from 72.83% toward 80%, especially for skipped XGBoost/SHAP paths.
 2. Finalize and document the `select_features_adaptive()` output contract.
 3. Connect the model-agnostic `evaluate_downstream()` helper to the end-to-end experiment workflow.
 4. Review optional dependency metadata and make the experimental API boundaries explicit.

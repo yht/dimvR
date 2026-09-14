@@ -8,6 +8,9 @@
 #' @param formula Formula object, e.g. y ~ x1 + x2
 #' @param model_method Character string specifying the modeling method:
 #'   - "xgboost": Use xgboost package (requires xgboost installed)
+#'   - "ranger": Use ranger's random forest implementation (optional)
+#'   - "randomForest": Use randomForest (optional)
+#'   - "glmnet": Use elastic-net regression (optional)
 #'   - "glm": Use generalized linear model (base R)
 #'   - "lm": Use linear model (base R, default)
 #'   - "custom": Use a pre-specified model object
@@ -32,21 +35,28 @@
 #' for (j in seq_along(X)) X[sample(1:nrow(X), 10), j] <- NA
 #' imp <- dimv_train(X, lambda = 0.1)
 #' X_imp <- dimv_impute_new(imp, X)
+#' X_imp$y <- rnorm(nrow(X_imp))
 #' 
 #' # Example with lm (base R, no extra packages needed)
-#' result <- evaluate_downstream(X_imp, y ~ x1 + x2, method = "lm")
+#' result <- evaluate_downstream(X_imp, y ~ x1 + x2, model_method = "lm")
 #' result\$mse
 #' 
 #' # Example with xgboost (if available)
 #' \dontrun{
-#' result <- evaluate_downstream(X_imp, y ~ x1 + x2, method = "xgboost")
+#' result <- evaluate_downstream(X_imp, y ~ x1 + x2, model_method = "xgboost")
 #' result\$mse
 #' }
 evaluate_downstream <- function(imputed_data, formula, 
-                                model_method = c("lm", "glm", "xgboost", "custom"),
+                                model_method = c("lm", "glm", "ranger", "randomForest",
+                                                  "glmnet", "xgboost", "custom"),
                                 model = NULL, test_idx = NULL, ...) {
   
   model_method <- match.arg(model_method)
+  dots <- list(...)
+
+  if (!is.data.frame(imputed_data)) {
+    imputed_data <- as.data.frame(imputed_data)
+  }
   
   # Split data into train/test if test_idx not provided
   if (is.null(test_idx)) {
@@ -58,8 +68,7 @@ evaluate_downstream <- function(imputed_data, formula,
   test_data <- imputed_data[test_idx, , drop = FALSE]
   train_data <- imputed_data[-test_idx, , drop = FALSE]
   
-  # Extract model matrix and response
-  # Handle the formula properly
+  # Handle formula supplied as text and preserve its terms for train/test.
   f <- formula
   if (inherits(f, "character")) {
     f <- as.formula(f)
@@ -68,9 +77,9 @@ evaluate_downstream <- function(imputed_data, formula,
   # Get the response variable name
   response_name <- all.vars(f)[1]
   
-  # Prepare train data for modeling
   train_formula <- f
-  train_x <- model.matrix(train_formula, data = train_data)[, -1, drop = FALSE]  # Remove intercept column
+  train_x <- stats::model.matrix(train_formula, data = train_data)[, -1, drop = FALSE]
+  test_x <- stats::model.matrix(train_formula, data = test_data)[, -1, drop = FALSE]
   train_y <- train_data[[response_name]]
   
   # Get method
@@ -87,6 +96,35 @@ evaluate_downstream <- function(imputed_data, formula,
     # GLM (base R)
     "glm" = {
       glm(train_formula, data = train_data, ...)
+    },
+
+    # ranger (optional, fast random forest implementation)
+    "ranger" = {
+      if (!requireNamespace("ranger", quietly = TRUE)) {
+        stop("Package 'ranger' needed for this method. Install it or choose another method.")
+      }
+      ranger::ranger(formula = train_formula, data = train_data,
+                     respect.unordered.factors = "order", ...)
+    },
+
+    # randomForest (optional, established random forest implementation)
+    "randomForest" = {
+      if (!requireNamespace("randomForest", quietly = TRUE)) {
+        stop("Package 'randomForest' needed for this method. Install it or choose another method.")
+      }
+      randomForest::randomForest(formula = train_formula, data = train_data, ...)
+    },
+
+    # Elastic-net regression (optional)
+    "glmnet" = {
+      if (!requireNamespace("glmnet", quietly = TRUE)) {
+        stop("Package 'glmnet' needed for this method. Install it or choose another method.")
+      }
+      # `s` is a prediction-time choice in glmnet. Remove it from fitting
+      # arguments if supplied, then use it below for one prediction column.
+      fit_args <- dots
+      fit_args$s <- NULL
+      do.call(glmnet::glmnet, c(list(x = train_x, y = train_y), fit_args))
     },
     
     # XGBoost (requires package)
@@ -113,21 +151,29 @@ evaluate_downstream <- function(imputed_data, formula,
     }
   )
   
-  # Prepare test data
-  test_x <- model.matrix(~ ., data = test_data[, setdiff(names(test_data), response_name), drop = FALSE])
   test_y <- test_data[[response_name]]
   
   # Make predictions
   predictions <- switch(method,
     "lm" = predict(model, newdata = test_data),
     "glm" = predict(model, newdata = test_data),
+    "ranger" = {
+      as.numeric(stats::predict(model, data = test_data)$predictions)
+    },
+    "randomForest" = {
+      as.numeric(stats::predict(model, newdata = test_data))
+    },
+    "glmnet" = {
+      s_value <- dots$s
+      if (is.null(s_value)) s_value <- model$lambda[1L]
+      as.numeric(stats::predict(model, newx = test_x, s = s_value))
+    },
     "xgboost" = {
       # For xgboost, we need the model matrix
       if (!requireNamespace("xgboost", quietly = TRUE)) {
         stop("Package 'xgboost' needed for xgboost method")
       }
-      pred_mat <- model.matrix(~ ., data = test_x)
-      predict(model, newdata = as.matrix(pred_mat))
+      predict(model, newdata = as.matrix(test_x))
     },
     "custom" = predict(model, newdata = test_data)
   )
