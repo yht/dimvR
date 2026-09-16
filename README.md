@@ -35,8 +35,8 @@ with additional experimental components for benchmarking, explainability, and re
 
 ## Engineering Progress (P0)
 
-||| Item | Status | Evidence |||
-|---|---|---|---|---|---|
+| Item | Status | Evidence |
+|---|---|---|
 | CI matrix (Ubuntu/Windows, R release) | Implemented | `.github/workflows/r-check.yml` |
 | Standard test harness (`testthat`) | Implemented | `tests/testthat.R`, `DESCRIPTION` (`Config/testthat/edition: 3`) |
 | Automated smoke benchmark in CI | Implemented | `.github/workflows/smoke-benchmark.yml`, `eval/smoke_benchmark.R` |
@@ -45,15 +45,15 @@ with additional experimental components for benchmarking, explainability, and re
 | Q3 2026 coverage status | Updated | This README reflects September 2026 snapshot |
 | Runtime-check coverage tests | Implemented | Optional dependency fallback paths in `R/experiment.R` |
 
-Execution snapshot (2026-09-14):
+Execution snapshot (2026-09-14; test-suite verification repeated 2026-09-16):
 - `covr::package_coverage(type = "tests")` completed successfully
 - Coverage: 72.83% across 14 test files and 57 test cases
 - Coverage gate status: pass against interim threshold (40%)
-- Eight optional/conditional tests skipped: the XGBoost/SHAP paths are unavailable in this environment, and the missing-backend test is not applicable when `ranger` is installed
+- Eight optional/conditional tests skipped: the XGBoost/SHAP paths are unavailable in this environment, and the missing-backend test is not applicable when `ranger` is installed.
 
 Current implementation notes:
 - `run_full_pipeline()` is currently a regression-oriented workflow using `xgboost`.
-- Feature selection helpers are exported but explicitly marked experimental in `R/feature_selection.R`.
+- `select_features_adaptive()` is exported and explicitly marked experimental in `R/feature_selection.R`; its lower-level selection helpers remain internal.
 - `evaluate_downstream()` is exported and supports `ranger`, `randomForest`, and `glmnet` in addition to `lm`, `glm`, `xgboost`, and custom models.
 - The internal MICE backend exists in `R/mice_backend.R` but is still marked experimental and is not exported.
 - Core imputation uses a smaller required dependency set; benchmarking, SHAP, and report-generation helpers rely on additional suggested packages.
