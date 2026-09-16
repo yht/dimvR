@@ -19,10 +19,12 @@ multi-dataset benchmarks are still in progress.
 
 Current interim gate: `MIN_COVERAGE=40` (configured in workflow).
 
-Latest local validation (2026-09-10):
-- test_files: 12
-- test_cases: 45
-- coverage_percent: 50.43
+Latest checked-in coverage validation (2026-09-14):
+- test_files: 14
+- test_cases: 57
+- coverage_percent: 72.83
 - coverage gate: PASS at the interim threshold of 40%
 
-Seven tests requiring the optional `xgboost` package were skipped in this environment.
+Eight optional/conditional tests were skipped in this environment: the XGBoost/SHAP paths were unavailable, and the missing-backend test was not applicable because `ranger` was installed.
+
+The smoke benchmark artifact is from 2026-09-10; the coverage and progress artifacts were regenerated on 2026-09-14.

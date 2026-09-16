@@ -5,9 +5,9 @@ This document replaces `PROGRESS_PHASE1.md` and summarizes the implementation st
 ## Current Snapshot (Q3 2026)
 - Package: `dimvR` (v0.1.2)
 - Current focus: core imputation stabilization, documentation alignment, and clearer separation of experimental components
-- Coverage status Q3 2026: **72.83%** (measured 2026-09-14 with `covr`)
+- Coverage status Q3 2026: **72.83%** (measured 2026-09-14 with `covr`; latest checked-in artifact)
 - Q3 2026 status: Core imputation is functional; experimental features remain under active refinement
-- Latest verification (2026-09-14):
+- Latest coverage verification (2026-09-14), with the test suite re-run on 2026-09-16:
   - Test files: 14 (in `tests/testthat/`)
   - Test cases: 57
   - Coverage percent: **72.83%**
@@ -80,7 +80,7 @@ This document replaces `PROGRESS_PHASE1.md` and summarizes the implementation st
 
 ### Explainability and Benchmarking
 
-- Completion: 71.4% (5 of 7 items completed)
+- Completion: 85.7% (6 of 7 items completed)
 - [x] `run_full_pipeline()`
 - [x] `compute_shap_parallel()`
 - [x] `generate_report()`
@@ -124,7 +124,7 @@ This document replaces `PROGRESS_PHASE1.md` and summarizes the implementation st
 - Feature selection, report generation, SHAP benchmarking, and the internal MICE backend are treated as experimental components.
 - Short-term work is prioritized toward documentation alignment, metadata cleanup, and test quality rather than major architectural refactoring.
 
-## Priorities for 2026-09-14
+## Priorities for 2026-09-16
 
 1. Raise coverage from 72.83% toward 80%, especially for skipped XGBoost/SHAP paths.
 2. Finalize and document the `select_features_adaptive()` output contract.
