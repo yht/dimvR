@@ -45,7 +45,7 @@ with additional experimental components for benchmarking, explainability, and re
 | Q3 2026 coverage status | Updated | This README reflects September 2026 snapshot |
 | Runtime-check coverage tests | Implemented | Optional dependency fallback paths in `R/experiment.R` |
 
-Execution snapshot (2026-09-14; test-suite verification repeated 2026-09-16):
+Execution snapshot (2026-11-26; test-suite verification repeated 2026-09-16):
 - `covr::package_coverage(type = "tests")` completed successfully
 - Coverage: 72.83% across 14 test files and 57 test cases
 - Coverage gate status: pass against interim threshold (40%)
@@ -176,7 +176,7 @@ fs$selected_features
 ## Documentation and Examples
 - Vignette: `vignettes/feature_selection.Rmd`
 - Examples: `examples/day1_feature_selection_demo.R`, `examples/benchmark_feature_selection.R`
-
+- Changelog: `NEWS.md` (CRAN format), `CHANGELOG.md` (detailed)
 
 ## Roadmap Overview
 

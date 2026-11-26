@@ -1,4 +1,4 @@
-library(dimvExplainRpaper)
+library(dimvR)
 library(future)
 library(magrittr)
 plan(multisession)

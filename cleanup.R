@@ -1,11 +1,11 @@
 # ===========================================
 # cleanup.R
-# Full cleanup utility for dimvExplainRpaper
+# Full cleanup utility for dimvR
 # - removes experiment results, reports, caches, and future workers
 # ===========================================
 
 cleanup_project <- function(keep_reports = FALSE, verbose = TRUE, kill_futures = TRUE) {
-  cat("🧹 Starting full cleanup of dimvExplainRpaper project...\n")
+  cat("🧹 Starting full cleanup of dimvR project...\n")
   
   root <- getwd()
   

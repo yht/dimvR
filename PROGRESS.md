@@ -42,6 +42,14 @@ This document replaces `PROGRESS_PHASE1.md` and summarizes the implementation st
 - [x] Update `run_full_pipeline()` for the active `xgboost` interface and rerun tests
 - [x] Add tests for optional dependency fallbacks
 
+### Completed 2026-11-26
+
+- [x] Create `NEWS.md` (CRAN-standard format)
+- [x] Create `CHANGELOG.md` (detailed Keep a Changelog format)
+- [x] Fix rename artifacts: `cleanup.R`, `inst/examples/california_data.R`
+- [x] Update `README.md` to reference changelog files
+- [x] Update `PROGRESS.md` documentation checklist to 100%
+
 ### Remaining For Q3 2026
 
 - [ ] Raise automated test coverage from 72.83% toward the 80% target, prioritizing skipped XGBoost/SHAP paths
@@ -99,12 +107,12 @@ This document replaces `PROGRESS_PHASE1.md` and summarizes the implementation st
 
 ## Documentation Checklist
 
-- Completion: 80.0% (4 of 5 items completed)
+- Completion: 100.0% (5 of 5 items completed)
 - [x] `README.md` updated to match the current codebase
 - [x] Feature selection vignette available
 - [x] Example scripts available in `examples/`
 - [x] Add public-facing documentation for experimental workflow limitations
-- [ ] Add a formal changelog or release notes
+- [x] Add a formal changelog or release notes (`NEWS.md`, `CHANGELOG.md`)
 
 ## Infrastructure Checklist
 
